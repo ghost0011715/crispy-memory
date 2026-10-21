@@ -209,6 +209,9 @@ tempCodeRunnerFile.py
 # PyPI configuration file
 .pypirc
 
+# Generated intake databases and reports
+/out/
+
 # Marimo
 marimo/_static/
 marimo/_lsp/
