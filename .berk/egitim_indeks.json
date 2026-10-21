@@ -1,0 +1,811 @@
+{
+  "şema_sürüm": 1,
+  "üretim": "2026-10-21T06:17:16.070Z",
+  "kökler": [
+    "c:\\Users\\faisa\\.vscode\\extensions\\arslantasm-tools.berk-lang-1.0.0\\stdlib_rehber"
+  ],
+  "kütüphaneler": {
+    "_çekirdek": {
+      "lisans": "çekirdek",
+      "kök": "c:\\Users\\faisa\\.vscode\\extensions\\arslantasm-tools.berk-lang-1.0.0\\stdlib_rehber",
+      "kütüphane_belge": {
+        "json": "PAKET_01_VERI_FORMATLARI.md",
+        "xml": "PAKET_01_VERI_FORMATLARI.md",
+        "yaml": "PAKET_01_VERI_FORMATLARI.md",
+        "ini": "PAKET_01_VERI_FORMATLARI.md",
+        "csv": "PAKET_01_VERI_FORMATLARI.md",
+        "msgpack": "PAKET_01_VERI_FORMATLARI.md",
+        "protobuf": "PAKET_01_VERI_FORMATLARI.md",
+        "binproto": "PAKET_01_VERI_FORMATLARI.md",
+        "compression": "PAKET_01_VERI_FORMATLARI.md",
+        "config": "PAKET_01_VERI_FORMATLARI.md",
+        "belge": "PAKET_01_VERI_FORMATLARI.md",
+        "desen": "PAKET_02_METIN_DESEN.md",
+        "regex": "PAKET_02_METIN_DESEN.md",
+        "arama": "PAKET_02_METIN_DESEN.md",
+        "complex": "PAKET_03_MATEMATIK.md",
+        "linalg": "PAKET_03_MATEMATIK.md",
+        "polynomial": "PAKET_03_MATEMATIK.md",
+        "math_3d": "PAKET_03_MATEMATIK.md",
+        "sparse": "PAKET_03_MATEMATIK.md",
+        "optim": "PAKET_03_MATEMATIK.md",
+        "istatistik": "PAKET_03_MATEMATIK.md",
+        "stats": "PAKET_03_MATEMATIK.md",
+        "simd": "PAKET_03_MATEMATIK.md",
+        "exact": "PAKET_03_MATEMATIK.md",
+        "analiz": "PAKET_03_MATEMATIK.md",
+        "graphics": "PAKET_04_GRAFIK_GEOMETRI.md",
+        "color": "PAKET_04_GRAFIK_GEOMETRI.md",
+        "image": "PAKET_04_GRAFIK_GEOMETRI.md",
+        "vision": "PAKET_04_GRAFIK_GEOMETRI.md",
+        "mesh": "PAKET_04_GRAFIK_GEOMETRI.md",
+        "marching_cubes": "PAKET_04_GRAFIK_GEOMETRI.md",
+        "csg": "PAKET_04_GRAFIK_GEOMETRI.md",
+        "cad": "PAKET_04_GRAFIK_GEOMETRI.md",
+        "cad3d": "PAKET_04_GRAFIK_GEOMETRI.md",
+        "grafik": "PAKET_04_GRAFIK_GEOMETRI.md",
+        "physics": "PAKET_05_FIZIK_MUH.md",
+        "fizik2d": "PAKET_05_FIZIK_MUH.md",
+        "fem": "PAKET_05_FIZIK_MUH.md",
+        "control": "PAKET_05_FIZIK_MUH.md",
+        "material": "PAKET_05_FIZIK_MUH.md",
+        "units": "PAKET_05_FIZIK_MUH.md",
+        "crypto": "PAKET_06_KRIPTO.md",
+        "crypto_saf": "PAKET_06_KRIPTO.md",
+        "crypto_kopru": "PAKET_06_KRIPTO.md",
+        "crypto_native": "PAKET_06_KRIPTO.md",
+        "pqc": "PAKET_06_KRIPTO.md",
+        "http": "PAKET_07_AG_WEB_DB.md",
+        "network": "PAKET_07_AG_WEB_DB.md",
+        "sqlite": "PAKET_07_AG_WEB_DB.md",
+        "logging": "PAKET_07_AG_WEB_DB.md",
+        "database": "PAKET_07_AG_WEB_DB.md",
+        "web": "PAKET_07_AG_WEB_DB.md",
+        "serial": "PAKET_08_GOMULU_RTOS.md",
+        "modbus": "PAKET_08_GOMULU_RTOS.md",
+        "firmata": "PAKET_08_GOMULU_RTOS.md",
+        "slip": "PAKET_08_GOMULU_RTOS.md",
+        "embedded": "PAKET_08_GOMULU_RTOS.md",
+        "hal": "PAKET_08_GOMULU_RTOS.md",
+        "sensor": "PAKET_08_GOMULU_RTOS.md",
+        "rtos": "PAKET_08_GOMULU_RTOS.md",
+        "spectral": "PAKET_09_DSP_SES.md",
+        "audio": "PAKET_09_DSP_SES.md",
+        "terminal": "PAKET_10_SISTEM_ARAC_GUI.md",
+        "gui": "PAKET_10_SISTEM_ARAC_GUI.md",
+        "gorsel": "PAKET_10_SISTEM_ARAC_GUI.md",
+        "rules": "PAKET_10_SISTEM_ARAC_GUI.md",
+        "validation": "PAKET_10_SISTEM_ARAC_GUI.md",
+        "yetenek": "PAKET_10_SISTEM_ARAC_GUI.md",
+        "paralel": "PAKET_10_SISTEM_ARAC_GUI.md",
+        "wasm": "PAKET_10_SISTEM_ARAC_GUI.md",
+        "graf": "PAKET_10_SISTEM_ARAC_GUI.md",
+        "histogram": "PAKET_10_SISTEM_ARAC_GUI.md",
+        "pencere": "PAKET_10_SISTEM_ARAC_GUI.md",
+        "nedensellik": "PAKET_10_SISTEM_ARAC_GUI.md",
+        "repro": "PAKET_10_SISTEM_ARAC_GUI.md",
+        "protocol": "PAKET_10_SISTEM_ARAC_GUI.md",
+        "ai": "PAKET_11_ALAN.md",
+        "bio": "PAKET_11_ALAN.md",
+        "finance": "PAKET_11_ALAN.md",
+        "ros": "PAKET_11_ALAN.md",
+        "liste": "STDLIB_01_VERI_YAPILARI_METIN.md",
+        "sozluk": "STDLIB_01_VERI_YAPILARI_METIN.md",
+        "kume": "STDLIB_01_VERI_YAPILARI_METIN.md",
+        "sirali": "STDLIB_01_VERI_YAPILARI_METIN.md",
+        "kuyruk": "STDLIB_01_VERI_YAPILARI_METIN.md",
+        "yigin": "STDLIB_01_VERI_YAPILARI_METIN.md",
+        "halka": "STDLIB_01_VERI_YAPILARI_METIN.md",
+        "oncelik": "STDLIB_01_VERI_YAPILARI_METIN.md",
+        "collections": "STDLIB_01_VERI_YAPILARI_METIN.md",
+        "iter": "STDLIB_01_VERI_YAPILARI_METIN.md",
+        "string": "STDLIB_01_VERI_YAPILARI_METIN.md",
+        "utf8": "STDLIB_01_VERI_YAPILARI_METIN.md",
+        "math": "STDLIB_02_SAYISAL.md",
+        "matris": "STDLIB_02_SAYISAL.md",
+        "vektor": "STDLIB_02_SAYISAL.md",
+        "lineer": "STDLIB_02_SAYISAL.md",
+        "random": "STDLIB_02_SAYISAL.md",
+        "deterministic": "STDLIB_02_SAYISAL.md",
+        "io": "STDLIB_03_SISTEM_GC.md",
+        "fs": "STDLIB_03_SISTEM_GC.md",
+        "sys": "STDLIB_03_SISTEM_GC.md",
+        "encoding": "STDLIB_03_SISTEM_GC.md",
+        "fmt": "STDLIB_03_SISTEM_GC.md",
+        "time": "STDLIB_03_SISTEM_GC.md",
+        "async": "STDLIB_04_ESZAMANLILIK.md",
+        "vaat": "STDLIB_04_ESZAMANLILIK.md",
+        "thread": "STDLIB_04_ESZAMANLILIK.md",
+        "sync": "STDLIB_04_ESZAMANLILIK.md",
+        "atomic": "STDLIB_04_ESZAMANLILIK.md",
+        "eszamanlilik": "STDLIB_04_ESZAMANLILIK.md",
+        "result": "STDLIB_05_HATA_TEST_PRELUDE.md",
+        "testing": "STDLIB_05_HATA_TEST_PRELUDE.md",
+        "prelude": "STDLIB_05_HATA_TEST_PRELUDE.md",
+        "saf": "STDLIB_05_HATA_TEST_PRELUDE.md"
+      },
+      "dosyalar": [
+        {
+          "ad": "PAKET_01_VERI_FORMATLARI.md",
+          "yol": "PAKET_01_VERI_FORMATLARI.md",
+          "sha256": "7f7751c2d9daa8e6b4d7232f940949488295063dc8c5ed98db40e367ba4ed046",
+          "bayt": 86951
+        },
+        {
+          "ad": "PAKET_02_METIN_DESEN.md",
+          "yol": "PAKET_02_METIN_DESEN.md",
+          "sha256": "7a32dc8c740d3ee8536dc25bd1c83fe8a5d3ebfb03417f2ebf1b6f26246a5229",
+          "bayt": 22977
+        },
+        {
+          "ad": "PAKET_03_MATEMATIK.md",
+          "yol": "PAKET_03_MATEMATIK.md",
+          "sha256": "94a2330b181baada6721d6224445072cc7d58ded6baf92bc36951f518a0fb8d2",
+          "bayt": 106217
+        },
+        {
+          "ad": "PAKET_04_GRAFIK_GEOMETRI.md",
+          "yol": "PAKET_04_GRAFIK_GEOMETRI.md",
+          "sha256": "6165e7b6559e00fb5e799ffa5a9faac01ab213a8d74d5f687daad08d0b623335",
+          "bayt": 81897
+        },
+        {
+          "ad": "PAKET_05_FIZIK_MUH.md",
+          "yol": "PAKET_05_FIZIK_MUH.md",
+          "sha256": "52ae4fd9917e2180d4a6d82a05c90a9729cef99fdf7e7516bdb98dc06b1b4232",
+          "bayt": 78938
+        },
+        {
+          "ad": "PAKET_06_KRIPTO.md",
+          "yol": "PAKET_06_KRIPTO.md",
+          "sha256": "4908ff0ae1adb51e4f63bfd8bcf30f45707e471ae4060dc2ee2aafdb0643d12e",
+          "bayt": 46745
+        },
+        {
+          "ad": "PAKET_07_AG_WEB_DB.md",
+          "yol": "PAKET_07_AG_WEB_DB.md",
+          "sha256": "73133101f4ff1ee6e6ac87c8ba4956921f2e4931f6dda6333439e0f6d34986ef",
+          "bayt": 163048
+        },
+        {
+          "ad": "PAKET_08_GOMULU_RTOS.md",
+          "yol": "PAKET_08_GOMULU_RTOS.md",
+          "sha256": "cae0262ee5260ad0f39f27ff01cf3fa66e87e7e5950c33933f7cff636804169d",
+          "bayt": 165204
+        },
+        {
+          "ad": "PAKET_09_DSP_SES.md",
+          "yol": "PAKET_09_DSP_SES.md",
+          "sha256": "a1c6ab29c5ae0d6711502dbca2385c2901dcb01e7d9ffa0ab2753e4248130dd9",
+          "bayt": 92784
+        },
+        {
+          "ad": "PAKET_10_SISTEM_ARAC_GUI.md",
+          "yol": "PAKET_10_SISTEM_ARAC_GUI.md",
+          "sha256": "26af33833ab5dcaf69afb6dead765b5aad78c5aaec08ca303d4f226069ab2af6",
+          "bayt": 160365
+        },
+        {
+          "ad": "PAKET_10b_GUI_EN_TAKMA_ADLAR.md",
+          "yol": "PAKET_10b_GUI_EN_TAKMA_ADLAR.md",
+          "sha256": "e14702f45f15bd591e6300801c2b21e7dc5d46e7315cc0c3b20c375e93891782",
+          "bayt": 126063
+        },
+        {
+          "ad": "PAKET_11_ALAN.md",
+          "yol": "PAKET_11_ALAN.md",
+          "sha256": "c8c1af22110636f9ea0ec078bdc54c04b081b269a5da747a0d16efe8033d8d6e",
+          "bayt": 103289
+        },
+        {
+          "ad": "STDLIB_01_VERI_YAPILARI_METIN.md",
+          "yol": "STDLIB_01_VERI_YAPILARI_METIN.md",
+          "sha256": "f578163916cdaa19e05f8d626af2d04b46ce436c57f43256deb3173565b1ff47",
+          "bayt": 55538
+        },
+        {
+          "ad": "STDLIB_02_SAYISAL.md",
+          "yol": "STDLIB_02_SAYISAL.md",
+          "sha256": "b1de39870b4563592933dd51acf7f3b0d6708b94aee8606117ab341afc3f826b",
+          "bayt": 57357
+        },
+        {
+          "ad": "STDLIB_03_SISTEM_GC.md",
+          "yol": "STDLIB_03_SISTEM_GC.md",
+          "sha256": "2d21e157e92700f011729ccffb5936b57fd5bac125bbf020e72c099ad3078dbe",
+          "bayt": 98640
+        },
+        {
+          "ad": "STDLIB_04_ESZAMANLILIK.md",
+          "yol": "STDLIB_04_ESZAMANLILIK.md",
+          "sha256": "991ce19f01283f2acff22a3c9143dd8ec67cd281694d96ecb9bd34c4b9595d91",
+          "bayt": 49369
+        },
+        {
+          "ad": "STDLIB_05_HATA_TEST_PRELUDE.md",
+          "yol": "STDLIB_05_HATA_TEST_PRELUDE.md",
+          "sha256": "a68dfb9e324c9b04dda2fa18561858808c6cc8630787b6018a7b963c49be3b77",
+          "bayt": 34753
+        }
+      ]
+    }
+  },
+  "çekirdek_kütüphane_belge": {
+    "json": "PAKET_01_VERI_FORMATLARI.md",
+    "xml": "PAKET_01_VERI_FORMATLARI.md",
+    "yaml": "PAKET_01_VERI_FORMATLARI.md",
+    "ini": "PAKET_01_VERI_FORMATLARI.md",
+    "csv": "PAKET_01_VERI_FORMATLARI.md",
+    "msgpack": "PAKET_01_VERI_FORMATLARI.md",
+    "protobuf": "PAKET_01_VERI_FORMATLARI.md",
+    "binproto": "PAKET_01_VERI_FORMATLARI.md",
+    "compression": "PAKET_01_VERI_FORMATLARI.md",
+    "config": "PAKET_01_VERI_FORMATLARI.md",
+    "belge": "PAKET_01_VERI_FORMATLARI.md",
+    "desen": "PAKET_02_METIN_DESEN.md",
+    "regex": "PAKET_02_METIN_DESEN.md",
+    "arama": "PAKET_02_METIN_DESEN.md",
+    "complex": "PAKET_03_MATEMATIK.md",
+    "linalg": "PAKET_03_MATEMATIK.md",
+    "polynomial": "PAKET_03_MATEMATIK.md",
+    "math_3d": "PAKET_03_MATEMATIK.md",
+    "sparse": "PAKET_03_MATEMATIK.md",
+    "optim": "PAKET_03_MATEMATIK.md",
+    "istatistik": "PAKET_03_MATEMATIK.md",
+    "stats": "PAKET_03_MATEMATIK.md",
+    "simd": "PAKET_03_MATEMATIK.md",
+    "exact": "PAKET_03_MATEMATIK.md",
+    "analiz": "PAKET_03_MATEMATIK.md",
+    "graphics": "PAKET_04_GRAFIK_GEOMETRI.md",
+    "color": "PAKET_04_GRAFIK_GEOMETRI.md",
+    "image": "PAKET_04_GRAFIK_GEOMETRI.md",
+    "vision": "PAKET_04_GRAFIK_GEOMETRI.md",
+    "mesh": "PAKET_04_GRAFIK_GEOMETRI.md",
+    "marching_cubes": "PAKET_04_GRAFIK_GEOMETRI.md",
+    "csg": "PAKET_04_GRAFIK_GEOMETRI.md",
+    "cad": "PAKET_04_GRAFIK_GEOMETRI.md",
+    "cad3d": "PAKET_04_GRAFIK_GEOMETRI.md",
+    "grafik": "PAKET_04_GRAFIK_GEOMETRI.md",
+    "physics": "PAKET_05_FIZIK_MUH.md",
+    "fizik2d": "PAKET_05_FIZIK_MUH.md",
+    "fem": "PAKET_05_FIZIK_MUH.md",
+    "control": "PAKET_05_FIZIK_MUH.md",
+    "material": "PAKET_05_FIZIK_MUH.md",
+    "units": "PAKET_05_FIZIK_MUH.md",
+    "crypto": "PAKET_06_KRIPTO.md",
+    "crypto_saf": "PAKET_06_KRIPTO.md",
+    "crypto_kopru": "PAKET_06_KRIPTO.md",
+    "crypto_native": "PAKET_06_KRIPTO.md",
+    "pqc": "PAKET_06_KRIPTO.md",
+    "http": "PAKET_07_AG_WEB_DB.md",
+    "network": "PAKET_07_AG_WEB_DB.md",
+    "sqlite": "PAKET_07_AG_WEB_DB.md",
+    "logging": "PAKET_07_AG_WEB_DB.md",
+    "database": "PAKET_07_AG_WEB_DB.md",
+    "web": "PAKET_07_AG_WEB_DB.md",
+    "serial": "PAKET_08_GOMULU_RTOS.md",
+    "modbus": "PAKET_08_GOMULU_RTOS.md",
+    "firmata": "PAKET_08_GOMULU_RTOS.md",
+    "slip": "PAKET_08_GOMULU_RTOS.md",
+    "embedded": "PAKET_08_GOMULU_RTOS.md",
+    "hal": "PAKET_08_GOMULU_RTOS.md",
+    "sensor": "PAKET_08_GOMULU_RTOS.md",
+    "rtos": "PAKET_08_GOMULU_RTOS.md",
+    "spectral": "PAKET_09_DSP_SES.md",
+    "audio": "PAKET_09_DSP_SES.md",
+    "terminal": "PAKET_10_SISTEM_ARAC_GUI.md",
+    "gui": "PAKET_10_SISTEM_ARAC_GUI.md",
+    "gorsel": "PAKET_10_SISTEM_ARAC_GUI.md",
+    "rules": "PAKET_10_SISTEM_ARAC_GUI.md",
+    "validation": "PAKET_10_SISTEM_ARAC_GUI.md",
+    "yetenek": "PAKET_10_SISTEM_ARAC_GUI.md",
+    "paralel": "PAKET_10_SISTEM_ARAC_GUI.md",
+    "wasm": "PAKET_10_SISTEM_ARAC_GUI.md",
+    "graf": "PAKET_10_SISTEM_ARAC_GUI.md",
+    "histogram": "PAKET_10_SISTEM_ARAC_GUI.md",
+    "pencere": "PAKET_10_SISTEM_ARAC_GUI.md",
+    "nedensellik": "PAKET_10_SISTEM_ARAC_GUI.md",
+    "repro": "PAKET_10_SISTEM_ARAC_GUI.md",
+    "protocol": "PAKET_10_SISTEM_ARAC_GUI.md",
+    "ai": "PAKET_11_ALAN.md",
+    "bio": "PAKET_11_ALAN.md",
+    "finance": "PAKET_11_ALAN.md",
+    "ros": "PAKET_11_ALAN.md",
+    "liste": "STDLIB_01_VERI_YAPILARI_METIN.md",
+    "sozluk": "STDLIB_01_VERI_YAPILARI_METIN.md",
+    "kume": "STDLIB_01_VERI_YAPILARI_METIN.md",
+    "sirali": "STDLIB_01_VERI_YAPILARI_METIN.md",
+    "kuyruk": "STDLIB_01_VERI_YAPILARI_METIN.md",
+    "yigin": "STDLIB_01_VERI_YAPILARI_METIN.md",
+    "halka": "STDLIB_01_VERI_YAPILARI_METIN.md",
+    "oncelik": "STDLIB_01_VERI_YAPILARI_METIN.md",
+    "collections": "STDLIB_01_VERI_YAPILARI_METIN.md",
+    "iter": "STDLIB_01_VERI_YAPILARI_METIN.md",
+    "string": "STDLIB_01_VERI_YAPILARI_METIN.md",
+    "utf8": "STDLIB_01_VERI_YAPILARI_METIN.md",
+    "math": "STDLIB_02_SAYISAL.md",
+    "matris": "STDLIB_02_SAYISAL.md",
+    "vektor": "STDLIB_02_SAYISAL.md",
+    "lineer": "STDLIB_02_SAYISAL.md",
+    "random": "STDLIB_02_SAYISAL.md",
+    "deterministic": "STDLIB_02_SAYISAL.md",
+    "io": "STDLIB_03_SISTEM_GC.md",
+    "fs": "STDLIB_03_SISTEM_GC.md",
+    "sys": "STDLIB_03_SISTEM_GC.md",
+    "encoding": "STDLIB_03_SISTEM_GC.md",
+    "fmt": "STDLIB_03_SISTEM_GC.md",
+    "time": "STDLIB_03_SISTEM_GC.md",
+    "async": "STDLIB_04_ESZAMANLILIK.md",
+    "vaat": "STDLIB_04_ESZAMANLILIK.md",
+    "thread": "STDLIB_04_ESZAMANLILIK.md",
+    "sync": "STDLIB_04_ESZAMANLILIK.md",
+    "atomic": "STDLIB_04_ESZAMANLILIK.md",
+    "eszamanlilik": "STDLIB_04_ESZAMANLILIK.md",
+    "result": "STDLIB_05_HATA_TEST_PRELUDE.md",
+    "testing": "STDLIB_05_HATA_TEST_PRELUDE.md",
+    "prelude": "STDLIB_05_HATA_TEST_PRELUDE.md",
+    "saf": "STDLIB_05_HATA_TEST_PRELUDE.md"
+  },
+  "eksik_lisanslı": [
+    "adas",
+    "avionics",
+    "dds",
+    "medical",
+    "mils",
+    "protocols",
+    "radar",
+    "railway",
+    "robotics",
+    "space",
+    "spectral_plus",
+    "telecom"
+  ],
+  "kurulabilir_paketler": [
+    {
+      "ad": "ai",
+      "alan": "Alan Kütüphaneleri: AI, Biyoenformatik, Finans, ROS2",
+      "belge": "PAKET_11_ALAN.md",
+      "aciklama": "Saf-BERK deterministik yapay zeka yığını: tensor ops, aktivasyon/kayıp/init (nn), backprop çekirdeği (grad), N-katman MLP (net), CNN (conv: ResNet/U-Net dahil), dizi modelleme (seq: RNN/attention/MHA/transformer enkoder), düzenlileştirme (dropout/L2/BatchNorm/LayerNorm), optimizerlar (SGD/Adam/AdamW/RMSprop), metrikler, RL, zaman-serisi, GAN, açıklanabilirlik, NLP, veri hattı, görüntü/ses ön-işleme. Determinizm: aynı girdi → bit-birebir aynı çıktı; sıra-koruyan paralel indirgeme."
+    },
+    {
+      "ad": "analiz",
+      "alan": "Bilimsel & Sayısal Paketler",
+      "belge": "PAKET_03_MATEMATIK.md",
+      "aciklama": "BERK Standart Kütüphanesi — analiz::zeta (Riemann Zeta / RH Doğrulama)"
+    },
+    {
+      "ad": "arama",
+      "alan": "Metin & Desen İşleme",
+      "belge": "PAKET_02_METIN_DESEN.md",
+      "aciklama": "BERK STDLIB — ARAMA (Deterministic Search)"
+    },
+    {
+      "ad": "audio",
+      "alan": "Sinyal İşleme (Sivil DSP) & Ses",
+      "belge": "PAKET_09_DSP_SES.md",
+      "aciklama": "Ses ve müzik: WAV/FLAC/OGG/MP3 çözme, WAV yazma, çevrimdışı deterministik render, hoparlör çıkışı (WASAPI/CoreAudio/ALSA/PulseAudio), mikrofon kaydı, geri çağrılı ses akışı, 3B ses, efektler, mikser, FFT/biquad DSP, konuşma algılama (VAD), MFCC, yeniden örnekleme, anahtar kelime (ai::net ile) / Audio: decode, WAV write, offline render, speaker output, microphone recording, callback streams, 3D, effects, mixer, DSP, voice activity detection, MFCC, resampling"
+    },
+    {
+      "ad": "binproto",
+      "alan": "Veri Formatları",
+      "belge": "PAKET_01_VERI_FORMATLARI.md",
+      "aciklama": "BERK Standart Kütüphanesi — binproto (Deterministik İkili Protokol Codec Çekirdeği)"
+    },
+    {
+      "ad": "bio",
+      "alan": "Alan Kütüphaneleri: AI, Biyoenformatik, Finans, ROS2",
+      "belge": "PAKET_11_ALAN.md",
+      "aciklama": "Deterministik biyoinformatik: dizi/hizalama (NW/SW, BLOSUM62/PAM250), dizi işlemleri, FASTA/FASTQ/SAM/VCF ayrıştırma, filogenetik (UPGMA/NJ), diferansiyel ifade; ÇİFT DİLLİ: kanonik Türkçe API + üretilmiş İngilizce cephe (bio::en, saf hesaplama modülleri)"
+    },
+    {
+      "ad": "cad",
+      "alan": "Grafik, Görüntü & Geometri",
+      "belge": "PAKET_04_GRAFIK_GEOMETRI.md",
+      "aciklama": "BERK CAD v1 — Çekirdek Geometri Motoru (saf BERK)"
+    },
+    {
+      "ad": "cad3d",
+      "alan": "Grafik, Görüntü & Geometri",
+      "belge": "PAKET_04_GRAFIK_GEOMETRI.md",
+      "aciklama": "CAD3D.BERK - 3D CAD Modelleme Sistemi (3D CAD Modeling System)"
+    },
+    {
+      "ad": "color",
+      "alan": "Grafik, Görüntü & Geometri",
+      "belge": "PAKET_04_GRAFIK_GEOMETRI.md",
+      "aciklama": "BERK Standart Kütüphanesi — color (Renk Uzayları & Renk Teorisi)"
+    },
+    {
+      "ad": "complex",
+      "alan": "Bilimsel & Sayısal Paketler",
+      "belge": "PAKET_03_MATEMATIK.md",
+      "aciklama": "BERK Standart Kütüphanesi — complex (Kompleks Sayılar / Complex Numbers)"
+    },
+    {
+      "ad": "compression",
+      "alan": "Veri Formatları",
+      "belge": "PAKET_01_VERI_FORMATLARI.md",
+      "aciklama": "COMPRESSION.BERK - Advanced Compression Library"
+    },
+    {
+      "ad": "config",
+      "alan": "Veri Formatları",
+      "belge": "PAKET_01_VERI_FORMATLARI.md",
+      "aciklama": "CONFIG.BERK - Yapılandırma Yönetimi (İdiomatik BERK, Deterministik)"
+    },
+    {
+      "ad": "control",
+      "alan": "Fizik & Mühendislik",
+      "belge": "PAKET_05_FIZIK_MUH.md",
+      "aciklama": "BERK STANDART KÜTÜPHANESİ — KONTROL SİSTEMLERİ (DOKTORA)"
+    },
+    {
+      "ad": "crypto",
+      "alan": "Kriptografi & Post-Kuantum",
+      "belge": "PAKET_06_KRIPTO.md",
+      "aciklama": "BERK Standart Kütüphanesi — crypto (Saf-BERK Kripto — YENİDEN YAZIM)"
+    },
+    {
+      "ad": "crypto_kopru",
+      "alan": "Kriptografi & Post-Kuantum",
+      "belge": "PAKET_06_KRIPTO.md",
+      "aciklama": "BERK Standart Kütüphanesi — crypto_kopru (Çalışan Kripto Cephesi)"
+    },
+    {
+      "ad": "crypto_native",
+      "alan": "Kriptografi & Post-Kuantum",
+      "belge": "PAKET_06_KRIPTO.md",
+      "aciklama": "BERK Standart Kütüphanesi — crypto_native (Native Simetrik/Asimetrik Sınır)"
+    },
+    {
+      "ad": "crypto_saf",
+      "alan": "Kriptografi & Post-Kuantum",
+      "belge": "PAKET_06_KRIPTO.md",
+      "aciklama": "BERK Standart Kütüphanesi — crypto_saf (Saf-BERK Kripto Çekirdeği)"
+    },
+    {
+      "ad": "csg",
+      "alan": "Grafik, Görüntü & Geometri",
+      "belge": "PAKET_04_GRAFIK_GEOMETRI.md",
+      "aciklama": "CSG.BERK — Katı Boolean (birleşim/fark/kesişim) · BSP-ağacı (saf BERK)"
+    },
+    {
+      "ad": "csv",
+      "alan": "Veri Formatları",
+      "belge": "PAKET_01_VERI_FORMATLARI.md",
+      "aciklama": "CSV — CSV ayrıştırma & üretme (saf-BERK, kendi-kendine yeterli)"
+    },
+    {
+      "ad": "database",
+      "alan": "Ağ, Web & Veritabanı",
+      "belge": "PAKET_07_AG_WEB_DB.md",
+      "aciklama": "BERK Standart Kütüphane - Veritabanı Göçleri (İdiomatik, Deterministik)"
+    },
+    {
+      "ad": "desen",
+      "alan": "Metin & Desen İşleme",
+      "belge": "PAKET_02_METIN_DESEN.md",
+      "aciklama": "DESEN — Düzenli İfade / Regex (Thompson NFA, geri-izlemesiz)"
+    },
+    {
+      "ad": "embedded",
+      "alan": "Gömülü, Endüstriyel & RTOS",
+      "belge": "PAKET_08_GOMULU_RTOS.md",
+      "aciklama": "BERK CoAP (Constrained Application Protocol) Module"
+    },
+    {
+      "ad": "exact",
+      "alan": "Bilimsel & Sayısal Paketler",
+      "belge": "PAKET_03_MATEMATIK.md",
+      "aciklama": "BERK Standart Kütüphanesi — exact::bignum (Büyük-Tamsayı Aritmetiği)"
+    },
+    {
+      "ad": "fem",
+      "alan": "Fizik & Mühendislik",
+      "belge": "PAKET_05_FIZIK_MUH.md",
+      "aciklama": "BERK Standart Kütüphanesi — fem (Sonlu Elemanlar Yöntemi Temelleri)"
+    },
+    {
+      "ad": "finance",
+      "alan": "Alan Kütüphaneleri: AI, Biyoenformatik, Finans, ROS2",
+      "belge": "PAKET_11_ALAN.md",
+      "aciklama": "Deterministik finansal hesaplama: sabit-nokta para aritmetiği, VaR/CVaR/Greeks risk, Black-Scholes/binomial türev fiyatlama, SMA/EMA/VWAP/RSI piyasa verisi, geri-test, emir defteri; ÇİFT DİLLİ: kanonik Türkçe API + üretilmiş İngilizce cephe (finance::en)"
+    },
+    {
+      "ad": "firmata",
+      "alan": "Gömülü, Endüstriyel & RTOS",
+      "belge": "PAKET_08_GOMULU_RTOS.md",
+      "aciklama": "BERK Standart Kütüphanesi — firmata (Deterministik Firmata Mesaj Codec)"
+    },
+    {
+      "ad": "fizik2d",
+      "alan": "Fizik & Mühendislik",
+      "belge": "PAKET_05_FIZIK_MUH.md",
+      "aciklama": "FİZİK2D — Deterministik 2B Çarpışma & Fizik Motoru (BERK)"
+    },
+    {
+      "ad": "graf",
+      "alan": "Sistem Araçları & GUI",
+      "belge": "PAKET_10_SISTEM_ARAC_GUI.md",
+      "aciklama": "BERK STDLIB — GRAF / GRAPH (Deterministic Edge-List Graph)"
+    },
+    {
+      "ad": "grafik",
+      "alan": "Grafik, Görüntü & Geometri",
+      "belge": "PAKET_04_GRAFIK_GEOMETRI.md",
+      "aciklama": "BERK Standart Kütüphanesi — grafik::kaplumbaga (Kaplumbağa Grafikleri)"
+    },
+    {
+      "ad": "graphics",
+      "alan": "Grafik, Görüntü & Geometri",
+      "belge": "PAKET_04_GRAFIK_GEOMETRI.md",
+      "aciklama": "GRAPHICS.BERK - Grafik ve Rendering Sistemi (Graphics and Rendering System)"
+    },
+    {
+      "ad": "hal",
+      "alan": "Gömülü, Endüstriyel & RTOS",
+      "belge": "PAKET_08_GOMULU_RTOS.md",
+      "aciklama": "BERK Standart Kütüphanesi — hal (Donanım Soyutlama Katmanı ana modülü)"
+    },
+    {
+      "ad": "histogram",
+      "alan": "Sistem Araçları & GUI",
+      "belge": "PAKET_10_SISTEM_ARAC_GUI.md",
+      "aciklama": "BERK STDLIB — HİSTOGRAM (Deterministic Frequency Histogram)"
+    },
+    {
+      "ad": "image",
+      "alan": "Grafik, Görüntü & Geometri",
+      "belge": "PAKET_04_GRAFIK_GEOMETRI.md",
+      "aciklama": "IMAGE.BERK - Görüntü İşleme Sistemi (Image Processing System)"
+    },
+    {
+      "ad": "ini",
+      "alan": "Veri Formatları",
+      "belge": "PAKET_01_VERI_FORMATLARI.md",
+      "aciklama": "INI — INI yapılandırma dosyası ayrıştırıcı & yazıcı (saf-BERK)"
+    },
+    {
+      "ad": "linalg",
+      "alan": "Bilimsel & Sayısal Paketler",
+      "belge": "PAKET_03_MATEMATIK.md",
+      "aciklama": "BERK Standart Kütüphanesi — linalg (Doğrusal Cebir / Linear Algebra)"
+    },
+    {
+      "ad": "logging",
+      "alan": "Ağ, Web & Veritabanı",
+      "belge": "PAKET_07_AG_WEB_DB.md",
+      "aciklama": "LOGGING.BERK - Structured Logging Library"
+    },
+    {
+      "ad": "marching_cubes",
+      "alan": "Grafik, Görüntü & Geometri",
+      "belge": "PAKET_04_GRAFIK_GEOMETRI.md",
+      "aciklama": "MARCHING_CUBES.BERK — SDF'den 3D Ağ Üretici"
+    },
+    {
+      "ad": "material",
+      "alan": "Fizik & Mühendislik",
+      "belge": "PAKET_05_FIZIK_MUH.md",
+      "aciklama": "BERK Standart Kütüphanesi — material (Yapısal Malzeme Modelleri)"
+    },
+    {
+      "ad": "math_3d",
+      "alan": "Bilimsel & Sayısal Paketler",
+      "belge": "PAKET_03_MATEMATIK.md",
+      "aciklama": "BERK Standart Kütüphanesi — math_3d (3B Vektör/Matris Matematiği)"
+    },
+    {
+      "ad": "mesh",
+      "alan": "Grafik, Görüntü & Geometri",
+      "belge": "PAKET_04_GRAFIK_GEOMETRI.md",
+      "aciklama": "MESH.BERK - 3D Mesh Utilities (Pure BERK)"
+    },
+    {
+      "ad": "modbus",
+      "alan": "Gömülü, Endüstriyel & RTOS",
+      "belge": "PAKET_08_GOMULU_RTOS.md",
+      "aciklama": "BERK Standart Kütüphanesi — modbus (Deterministik Modbus RTU/ASCII Çerçeve Codec)"
+    },
+    {
+      "ad": "msgpack",
+      "alan": "Veri Formatları",
+      "belge": "PAKET_01_VERI_FORMATLARI.md",
+      "aciklama": "BERK Standart Kütüphanesi — msgpack (Deterministik MessagePack Codec)"
+    },
+    {
+      "ad": "nedensellik",
+      "alan": "Sistem Araçları & GUI",
+      "belge": "PAKET_10_SISTEM_ARAC_GUI.md",
+      "aciklama": "BERK STANDART KÜTÜPHANESİ - NEDENSELLİK GRAFI (traceability, deterministik)"
+    },
+    {
+      "ad": "network",
+      "alan": "Ağ, Web & Veritabanı",
+      "belge": "PAKET_07_AG_WEB_DB.md",
+      "aciklama": "BERK Standart Kütüphanesi — network (Klasör Ana Modülü)"
+    },
+    {
+      "ad": "optim",
+      "alan": "Bilimsel & Sayısal Paketler",
+      "belge": "PAKET_03_MATEMATIK.md",
+      "aciklama": "BERK STANDART KÜTÜPHANESİ — SAYISAL OPTİMİZASYON (DOKTORA)"
+    },
+    {
+      "ad": "paralel",
+      "alan": "Sistem Araçları & GUI",
+      "belge": "PAKET_10_SISTEM_ARAC_GUI.md",
+      "aciklama": "PARALEL — Deterministik çok-çekirdek yardımcıları (saf-BERK)"
+    },
+    {
+      "ad": "pencere",
+      "alan": "Sistem Araçları & GUI",
+      "belge": "PAKET_10_SISTEM_ARAC_GUI.md",
+      "aciklama": "BERK STDLIB — HAREKETLİ PENCERE (Deterministic Sliding Window)"
+    },
+    {
+      "ad": "physics",
+      "alan": "Fizik & Mühendislik",
+      "belge": "PAKET_05_FIZIK_MUH.md",
+      "aciklama": "BERK STANDART KÜTÜPHANESİ — FİZİK MODÜLÜ (DOKTORA SEVİYESİ)"
+    },
+    {
+      "ad": "polynomial",
+      "alan": "Bilimsel & Sayısal Paketler",
+      "belge": "PAKET_03_MATEMATIK.md",
+      "aciklama": "BERK Standart Kütüphanesi — polynomial (Polinom Aritmetiği / Polynomials)"
+    },
+    {
+      "ad": "pqc",
+      "alan": "Kriptografi & Post-Kuantum",
+      "belge": "PAKET_06_KRIPTO.md",
+      "aciklama": "BERK Standart Kütüphanesi — pqc::api (Kuantum-Sonrası Kripto Fasadı)"
+    },
+    {
+      "ad": "protobuf",
+      "alan": "Veri Formatları",
+      "belge": "PAKET_01_VERI_FORMATLARI.md",
+      "aciklama": "BERK Standart Kütüphanesi — protobuf (Deterministik Protocol Buffers Codec)"
+    },
+    {
+      "ad": "protocol",
+      "alan": "Sistem Araçları & GUI",
+      "belge": "PAKET_10_SISTEM_ARAC_GUI.md",
+      "aciklama": "BERK Standart Kütüphane - Protocol Modül Ana Dosyası"
+    },
+    {
+      "ad": "regex",
+      "alan": "Metin & Desen İşleme",
+      "belge": "PAKET_02_METIN_DESEN.md",
+      "aciklama": "BERK Standart Kütüphanesi — regex (desen modülünün İNGİLİZCE YÜZEYİ)"
+    },
+    {
+      "ad": "repro",
+      "alan": "Sistem Araçları & GUI",
+      "belge": "PAKET_10_SISTEM_ARAC_GUI.md",
+      "aciklama": "BERK Standart Kütüphanesi — repro::ledger (Kayıt-Oynatma Defteri)"
+    },
+    {
+      "ad": "ros",
+      "alan": "Alan Kütüphaneleri: AI, Biyoenformatik, Finans, ROS2",
+      "belge": "PAKET_11_ALAN.md",
+      "aciklama": "Deterministik ROS 2 ara-katman modeli: tf/qos/isim/mesaj/dugum/servis/param + mühendislik katmanı graf/yasam/baslat/yurutucu/davranis; ÇİFT DİLLİ: kanonik Türkçe API + üretilmiş İngilizce cephe (ros::en) — use ros::en → qos_compatible, graph_healthy, bt_sequence"
+    },
+    {
+      "ad": "rtos",
+      "alan": "Gömülü, Endüstriyel & RTOS",
+      "belge": "PAKET_08_GOMULU_RTOS.md",
+      "aciklama": "Gerçek-zamanlı sistem: görev/zamanlayıcı/senkronizasyon (syscall sınırı), WCET karar mantığı, zamanlanabilirlik analizi (RM/EDF, Liu-Layland, RTA); ÇİFT DİLLİ: deterministik analiz alt-kümesi (wcet+zamanlama) için üretilmiş İngilizce cephe (rtos::en)"
+    },
+    {
+      "ad": "rules",
+      "alan": "Sistem Araçları & GUI",
+      "belge": "PAKET_10_SISTEM_ARAC_GUI.md",
+      "aciklama": "RULES.BERK - Rules Engine & Expert System"
+    },
+    {
+      "ad": "sensor",
+      "alan": "Gömülü, Endüstriyel & RTOS",
+      "belge": "PAKET_08_GOMULU_RTOS.md",
+      "aciklama": "BERK Standart Kütüphanesi — sensor (Klasör Ana Modülü)"
+    },
+    {
+      "ad": "serial",
+      "alan": "Gömülü, Endüstriyel & RTOS",
+      "belge": "PAKET_08_GOMULU_RTOS.md",
+      "aciklama": "BERK Standard Library - Serial Port Module"
+    },
+    {
+      "ad": "simd",
+      "alan": "Bilimsel & Sayısal Paketler",
+      "belge": "PAKET_03_MATEMATIK.md",
+      "aciklama": "SIMD — Deterministik vektör (veri-paralel) işlemleri (saf-BERK)"
+    },
+    {
+      "ad": "slip",
+      "alan": "Gömülü, Endüstriyel & RTOS",
+      "belge": "PAKET_08_GOMULU_RTOS.md",
+      "aciklama": "BERK Standart Kütüphanesi — slip (Deterministik RFC 1055 SLIP Codec)"
+    },
+    {
+      "ad": "sparse",
+      "alan": "Bilimsel & Sayısal Paketler",
+      "belge": "PAKET_03_MATEMATIK.md",
+      "aciklama": "BERK Standart Kütüphanesi — sparse (Seyrek Matris / Sparse Matrix, CRS)"
+    },
+    {
+      "ad": "spectral",
+      "alan": "Sinyal İşleme (Sivil DSP) & Ses",
+      "belge": "PAKET_09_DSP_SES.md",
+      "aciklama": "Deterministik sivil DSP cekirdegi: FFT/RFFT, NTT, OFDM, STFT/ISTFT, harmonik, ureteci, zamanlayici."
+    },
+    {
+      "ad": "sqlite",
+      "alan": "Ağ, Web & Veritabanı",
+      "belge": "PAKET_07_AG_WEB_DB.md",
+      "aciklama": "BERK Standart Kütüphanesi — sqlite (SQLite istemcisi)"
+    },
+    {
+      "ad": "stats",
+      "alan": "Bilimsel & Sayısal Paketler",
+      "belge": "PAKET_03_MATEMATIK.md",
+      "aciklama": "BERK Standart Kütüphanesi — stats (İstatistik & Olasılık / Statistics)"
+    },
+    {
+      "ad": "terminal",
+      "alan": "Sistem Araçları & GUI",
+      "belge": "PAKET_10_SISTEM_ARAC_GUI.md",
+      "aciklama": "TERMINAL.BERK - Advanced Terminal Control & TUI Library"
+    },
+    {
+      "ad": "units",
+      "alan": "Fizik & Mühendislik",
+      "belge": "PAKET_05_FIZIK_MUH.md",
+      "aciklama": "BERK Standart Kütüphanesi — units (Birim Sistemi / Boyutsal Analiz)"
+    },
+    {
+      "ad": "validation",
+      "alan": "Sistem Araçları & GUI",
+      "belge": "PAKET_10_SISTEM_ARAC_GUI.md",
+      "aciklama": "VALIDATION — Veri doğrulama (saf-BERK)"
+    },
+    {
+      "ad": "vision",
+      "alan": "Grafik, Görüntü & Geometri",
+      "belge": "PAKET_04_GRAFIK_GEOMETRI.md",
+      "aciklama": "BERK Standart Kütüphanesi — vision (Görüntü İşleme ve Bilgisayarlı Görü)"
+    },
+    {
+      "ad": "wasm",
+      "alan": "Sistem Araçları & GUI",
+      "belge": "PAKET_10_SISTEM_ARAC_GUI.md",
+      "aciklama": "BERK STANDART KÜTÜPHANESİ - WASM DETERMİNİZM ÇEKİRDEĞİ (write once, run identical)"
+    },
+    {
+      "ad": "web",
+      "alan": "Ağ, Web & Veritabanı",
+      "belge": "PAKET_07_AG_WEB_DB.md",
+      "aciklama": "BERK WEB — ARALIK İSTEKLERİ (Deterministic Range Requests)"
+    },
+    {
+      "ad": "xml",
+      "alan": "Veri Formatları",
+      "belge": "PAKET_01_VERI_FORMATLARI.md",
+      "aciklama": "XML — XML ayrıştırma & üretme (saf-BERK, özyinelemeli)"
+    },
+    {
+      "ad": "yaml",
+      "alan": "Veri Formatları",
+      "belge": "PAKET_01_VERI_FORMATLARI.md",
+      "aciklama": "YAML — Pratik YAML ayrıştırma (saf-BERK, kendi-kendine yeterli)"
+    },
+    {
+      "ad": "yetenek",
+      "alan": "Sistem Araçları & GUI",
+      "belge": "PAKET_10_SISTEM_ARAC_GUI.md",
+      "aciklama": "BERK STANDART KÜTÜPHANESİ - CAPABILITY SANDBOX (yetenek-tabanlı, deterministik)"
+    }
+  ],
+  "paket_önerisi": "PAKET ÖNERİSİ (proaktif): Kullanıcının istediği iş kurulu olmayan bir genel pakete denk geliyorsa (ör. sonlu eleman → fem, Modbus → modbus, görüntü işleme → vision/image, finans → finance) bunu SEN söyle: paketin adını ve ne işe yaradığını bir cümleyle belirt, kurmayı öner (çalışma alanı terminalinde `bpm install <ad> --strict` (paket berk_modules/ altına kurulur; bu dosya kendiliğinden tazelenir) · Berk Studio kullanıcısıysa Araçlar → Paket Yöneticisi). Kurulmadan `kullan <paket>` içeren kod yazma; yazacaksan önce kurulmasını iste. Hangi paketin uyduğundan emin değilsen aşağıdaki listede ad + alan + açıklamaya bak; API'yi kurulumdan önce de ilgili PAKET_xx eğitim belgesinden okuyabilirsin. LİSANSLI bir paket (EGITIM_DURUM'daki lisanslı liste) işe denk geliyorsa onu da adıyla söyle ve EK OLARAK edinme için https://berk-tech.com/iletisim.html adresine yönlendir (tarif: BPM_KULLANIM_REHBERI.md §7); genel kayıtta olmadığından `bpm install` tek başına önerme.",
+  "iletişim": "https://berk-tech.com/iletisim.html"
+}
