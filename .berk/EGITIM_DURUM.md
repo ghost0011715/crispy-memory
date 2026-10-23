@@ -1,6 +1,6 @@
 # BERK Eğitim / Paket Durumu (otomatik üretilir — elle düzenlemeyin)
 
-Üretim: 2026-10-21T06:17:16.087Z · üretici: berk-vscode (berk.egitimYenile; bpm değişikliğinde otomatik)
+Üretim: 2026-10-21T10:34:21.512Z · üretici: berk-vscode (berk.egitimYenile; bpm değişikliğinde otomatik)
 Asistan İLK BAKIŞTA kurulu paketleri burada görür; içerik TEMBEL yüklenir —
 dosya-sözleşmesi ve çözümleme sırası: BERK_AI_REHBERI.md §16, indeks: .berk/egitim_indeks.json
 Dil rehberi (sözdizimi, tipler, tuzaklar): `.berk/BERK_AI_REHBERI.md` · stdlib modeli: `.berk/STDLIB_AI_REHBERI.md`
