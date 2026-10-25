@@ -1,5 +1,6 @@
 {
     "recommendations": [
-        "ollama.ollama"
+        "ollama.ollama",
+        "acebunny00.gemini-cli-launcher"
     ]
 }
