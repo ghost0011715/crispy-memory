@@ -3,6 +3,13 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from runtime.station_engine import (
+    StationEngine,
+    StationHandlerResult,
+    StationPipeline,
+    StationRegistry,
+)
+from runtime.station07_settlement_gate import station07_settlement_gate
 from sovereign_runtime import RuntimeErrorState, SovereignRuntime
 
 
@@ -86,19 +93,39 @@ class SovereignRuntimeTests(unittest.TestCase):
         self.assertIn("runtime verified", Path(receipt["evidence_path"]).read_text(encoding="utf-8"))
         self.assertEqual(self.runtime.current(source["source_id"])["current_station"], "STATION_01")
 
-        for station in range(2, 8):
-            self.runtime.transition_station(
-                source_id=source["source_id"],
-                station=station,
-                state="PASS",
-                operation=f"STATION_{station:02d}_TEST",
-                evidence_id=receipt["evidence_id"],
-                run_id=receipt["run_id"],
-                ticket_id=ticket["ticket_id"],
-                workspace_id="WS-TEST",
-                zone_id="CODE_ZONE",
-                agent_id="SHADOW",
+        registry = StationRegistry()
+        for station in range(2, 7):
+            registry.register(
+                station,
+                lambda context: StationHandlerResult(
+                    state="PASS",
+                    operation=f"STATION_{context.station:02d}_TEST",
+                    evidence={"station": context.station, "verified": True},
+                ),
             )
+        productive_unit = {
+            "unit_id": "UNIT-001",
+            "source_id": source["source_id"],
+            "domain": "code",
+            "unit_type": "source",
+            "payload_pointer": str(self.source_path),
+            "content_sha256": source["sha256"],
+            "evidence_id": receipt["evidence_id"],
+            "retrieval_point": "code.system.test",
+            "verification_state": "PASS",
+        }
+        registry.register(7, station07_settlement_gate(self.runtime))
+        pipeline = StationPipeline(StationEngine(self.runtime, registry)).run(
+            source_id=source["source_id"],
+            ticket_id=ticket["ticket_id"],
+            run_id=receipt["run_id"],
+            workspace_id="WS-TEST",
+            zone_id="CODE_ZONE",
+            agent_id="SHADOW",
+            start_station=2,
+            metadata={"productive_units": [productive_unit]},
+        )
+        self.assertEqual(pipeline["state"], "PASS", pipeline)
 
         settled = self.runtime.settle(
             source_id=source["source_id"],
@@ -161,14 +188,25 @@ class SovereignRuntimeTests(unittest.TestCase):
         )
         if receipt["final_state"] != "PASS":
             self.fail(receipt["errors"])
+        registry = StationRegistry()
         for station in range(2, 8):
-            self.runtime.transition_station(
-                source_id=source["source_id"],
-                station=station,
-                state="PASS",
-                operation=f"STATION_{station:02d}",
-                evidence_id=receipt["evidence_id"],
+            registry.register(
+                station,
+                lambda context: StationHandlerResult(
+                    state="PASS",
+                    operation=f"STATION_{context.station:02d}",
+                    evidence={"station": context.station},
+                ),
             )
+        pipeline = StationPipeline(StationEngine(self.runtime, registry)).run(
+            source_id=source["source_id"],
+            ticket_id=ticket["ticket_id"],
+            run_id=receipt["run_id"],
+            workspace_id="WS-TEST",
+            agent_id="SHADOW",
+            start_station=2,
+        )
+        self.assertEqual(pipeline["state"], "PASS", pipeline)
         Path(receipt["evidence_path"]).write_text("{}", encoding="utf-8")
         with self.assertRaisesRegex(RuntimeErrorState, "EVIDENCE_HASH_MISMATCH"):
             self.runtime.settle(

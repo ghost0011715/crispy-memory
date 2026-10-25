@@ -51,5 +51,21 @@ temporary Shadow workspace, limits captured output, and records a receipt.
 This temporary copy is **not an operating-system sandbox**: authorized code can
 still access host resources. Only run trusted code, and do not treat a passing
 exit code as proof of correctness. The seven station transitions require
-sequential PASS states and evidence; settlement verifies the ONE_RUN receipt
-and evidence hash.
+sequential PASS states and evidence. `runtime/station_engine.py` provides a
+handler registry and sequential pipeline; unregistered stations produce HOLD,
+and every execution records a station-specific evidence file and receipt with
+readback checks.
+Handlers are not supplied by default: register only the station operations
+your workflow actually implements. The included `file_readback_handler` is a
+read-only example, not a general-purpose station implementation.
+`runtime/productive_units.py` validates productive-unit contracts and derives
+stable IDs. The production flow runs only with an authorized `ONE_RUN` ticket,
+an explicitly requested runtime, valid productive units, and actual handlers
+registered for stations 1-6. It installs the Station 07 gate, which checks
+unit evidence and hashes the physical payloads before settlement. Warehouse
+settlement rechecks the ONE_RUN receipt, Station 07 evidence, unit evidence,
+and payload hash; repeated settlement of the same unchanged unit is
+idempotent. `runtime/source_removal_gate.py` only reports whether a settled
+source is eligible for a separate removal request; it never deletes files and
+checks the retained source hash. This repository has no HTTP server, so these
+features are Python service APIs rather than Express routes.

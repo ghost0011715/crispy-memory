@@ -5,13 +5,18 @@ from __future__ import annotations
 import json
 import secrets
 import threading
-import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
 
-from sovereign_runtime import RuntimeErrorState, SovereignRuntime, _read_json, _write_json_atomic, sha256_file
+from sovereign_runtime import (
+    RuntimeErrorState,
+    SovereignRuntime,
+    _read_json,
+    _write_json_atomic,
+    sha256_file,
+)
 
 
 STATION_STATES = {
@@ -67,9 +72,14 @@ class StationRegistry:
         self._lock = threading.RLock()
 
     def register(self, station: int, handler: StationHandler) -> None:
-        if station in self._handlers:
-            raise RuntimeErrorState(f"STATION_HANDLER_ALREADY_REGISTERED:{station}")
-        self.replace(station, handler)
+        if type(station) is not int or not 1 <= station <= 7:
+            raise RuntimeErrorState("STATION_MUST_BE_1_TO_7")
+        if not callable(handler):
+            raise TypeError("STATION_HANDLER_MUST_BE_CALLABLE")
+        with self._lock:
+            if station in self._handlers:
+                raise RuntimeErrorState(f"STATION_HANDLER_ALREADY_REGISTERED:{station}")
+            self._handlers[station] = handler
 
     def replace(self, station: int, handler: StationHandler) -> None:
         if type(station) is not int or not 1 <= station <= 7:
@@ -104,7 +114,7 @@ class StationEngine:
         self.runtime = runtime
         self.registry = registry or StationRegistry()
         self.receipt_root = runtime.root / "stations" / "receipts"
-        self.evidence_root = runtime.root / "stations" / "evidence"
+        self.evidence_root = runtime.paths["evidence"]
         self.receipt_root.mkdir(parents=True, exist_ok=True)
         self.evidence_root.mkdir(parents=True, exist_ok=True)
 
@@ -121,6 +131,10 @@ class StationEngine:
             raise RuntimeErrorState("SOURCE_TICKET_MISMATCH")
         if ticket["status"] != "AUTHORIZED":
             raise RuntimeErrorState("TICKET_NOT_AUTHORIZED")
+        if ticket.get("operation") != "ONE_RUN":
+            raise RuntimeErrorState("TICKET_OPERATION_MISMATCH")
+        if ticket.get("capability") != "TERMINAL_EXECUTION":
+            raise RuntimeErrorState("TICKET_CAPABILITY_MISMATCH")
         if not context.workspace_id.strip() or not context.agent_id.strip():
             raise RuntimeErrorState("WORKSPACE_AND_AGENT_REQUIRED")
 
@@ -152,11 +166,32 @@ class StationEngine:
             )
         else:
             try:
-                result = handler(context)
+                result = handler(replace(context, input_ref=input_ref))
                 if not isinstance(result, StationHandlerResult):
                     raise TypeError("HANDLER_MUST_RETURN_STATION_HANDLER_RESULT")
                 if result.state not in STATION_STATES:
                     raise ValueError("INVALID_STATION_HANDLER_STATE")
+                if not isinstance(result.evidence, dict):
+                    raise TypeError("HANDLER_EVIDENCE_MUST_BE_A_MAPPING")
+                if not isinstance(result.metadata, dict):
+                    raise TypeError("HANDLER_METADATA_MUST_BE_A_MAPPING")
+                if not all(
+                    isinstance(items, list)
+                    and all(isinstance(item, str) for item in items)
+                    for items in (result.warnings, result.errors)
+                ):
+                    raise TypeError("HANDLER_WARNINGS_AND_ERRORS_MUST_BE_STRING_LISTS")
+                if not isinstance(result.operation, str) or not result.operation.strip():
+                    raise TypeError("HANDLER_OPERATION_REQUIRED")
+                json.dumps(
+                    {
+                        "evidence": result.evidence,
+                        "metadata": result.metadata,
+                        "warnings": result.warnings,
+                        "errors": result.errors,
+                    },
+                    allow_nan=False,
+                )
                 if result.state == "PASS" and not result.evidence:
                     result = StationHandlerResult(
                         state="NOT_VERIFIED",
@@ -228,6 +263,7 @@ class StationEngine:
             "sha256_after": result.sha256_after or result.sha256_before or source["sha256"],
             "warnings": list(result.warnings),
             "errors": errors,
+            "receipt_readback_verified": False,
             "started_at": started_at,
             "ended_at": _now(),
         }
@@ -236,7 +272,15 @@ class StationEngine:
             / source["source_id"]
             / f"{station_id}_{receipt['station_receipt_id']}.json"
         )
+        receipt["receipt_path"] = str(receipt_path)
+        receipt["receipt_readback_verified"] = True
         _write_json_atomic(receipt_path, receipt)
+        if _read_json(receipt_path, None) != receipt:
+            final_state = "NOT_VERIFIED"
+            receipt["state"] = final_state
+            receipt["errors"].append("RECEIPT_READBACK_FAILED")
+            receipt["receipt_readback_verified"] = False
+            _write_json_atomic(receipt_path, receipt)
 
         try:
             self.runtime.transition_station(
@@ -251,13 +295,18 @@ class StationEngine:
                 zone_id=context.zone_id,
                 agent_id=context.agent_id,
                 output_ref=result.output_ref or str(evidence_path),
+                evidence_sha256=evidence_hash,
             )
         except RuntimeErrorState as exc:
             receipt["state"] = "NOT_VERIFIED"
             receipt["errors"].append(f"FSX_TRANSITION_FAILED:{exc}")
             receipt["ended_at"] = _now()
+            receipt["receipt_readback_verified"] = True
             _write_json_atomic(receipt_path, receipt)
-        receipt["receipt_path"] = str(receipt_path)
+            if _read_json(receipt_path, None) != receipt:
+                receipt["receipt_readback_verified"] = False
+                receipt["errors"].append("RECEIPT_READBACK_FAILED")
+                _write_json_atomic(receipt_path, receipt)
         return receipt
 
 
@@ -283,6 +332,7 @@ class StationPipeline:
             raise RuntimeErrorState("INVALID_STATION_RANGE")
         completed: list[int] = []
         receipts: list[dict[str, Any]] = []
+        run_metadata = dict(metadata or {})
         for station in range(start_station, end_station + 1):
             receipt = self.engine.execute(
                 StationContext(
@@ -294,7 +344,7 @@ class StationPipeline:
                     zone_id=zone_id,
                     agent_id=agent_id,
                     input_ref=input_ref,
-                    metadata=metadata or {},
+                    metadata=dict(run_metadata),
                 )
             )
             receipts.append(receipt)
@@ -361,7 +411,3 @@ def file_readback_handler(runtime: SovereignRuntime) -> StationHandler:
             )
 
     return handle
-
-
-def _unused_sleep_marker() -> None:
-    time.sleep(0)

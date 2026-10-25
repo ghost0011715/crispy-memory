@@ -7,6 +7,7 @@ import hashlib
 import json
 import os
 import platform
+import re
 import secrets
 import shutil
 import subprocess
@@ -324,6 +325,7 @@ class SovereignRuntime:
         sha256_before: str | None = None,
         sha256_after: str | None = None,
         evidence_id: str | None = None,
+        evidence_sha256: str | None = None,
         run_id: str | None = None,
         ticket_id: str | None = None,
     ) -> dict[str, Any]:
@@ -350,6 +352,7 @@ class SovereignRuntime:
                 "sha256_before": sha256_before,
                 "sha256_after": sha256_after,
                 "evidence_id": evidence_id,
+                "evidence_sha256": evidence_sha256,
                 "run_id": run_id,
                 "ticket_id": ticket_id,
                 "timestamp": _now(),
@@ -370,6 +373,7 @@ class SovereignRuntime:
                 "payload_pointer": output_ref or (previous or {}).get("payload_pointer"),
                 "sha256": sha256_after or (previous or {}).get("sha256"),
                 "evidence_id": evidence_id or (previous or {}).get("evidence_id"),
+                "evidence_sha256": evidence_sha256 or (previous or {}).get("evidence_sha256"),
                 "run_id": run_id or (previous or {}).get("run_id"),
                 "ticket_id": ticket_id or (previous or {}).get("ticket_id"),
                 "updated_at": event["timestamp"],
@@ -771,6 +775,7 @@ class SovereignRuntime:
         zone_id: str | None = None,
         agent_id: str | None = None,
         output_ref: str | None = None,
+        evidence_sha256: str | None = None,
     ) -> dict[str, Any]:
         if type(station) is not int or not 1 <= station <= 7:
             raise RuntimeErrorState("STATION_MUST_BE_1_TO_7")
@@ -789,13 +794,49 @@ class SovereignRuntime:
                 expected_previous = f"STATION_{station - 1:02d}"
                 if not current or current["current_station"] != expected_previous or current["current_state"] != "PASS":
                     raise RuntimeErrorState(f"STATION_{station:02d}_REQUIRES_{expected_previous}_PASS")
+            if evidence_id:
+                raise RuntimeErrorState("RUNNING_CANNOT_REFERENCE_FINAL_EVIDENCE")
         else:
             if not current or current["current_station"] != station_name or current["current_state"] != "RUNNING":
+                if station == 1 and (
+                    not current
+                    or current["current_station"] != "STATION_01"
+                    or current["current_state"] != "PASS"
+                ):
+                    raise RuntimeErrorState("STATION_01_REQUIRES_ONE_RUN_PASS")
                 raise RuntimeErrorState(f"{station_name}_REQUIRES_RUNNING_STATE")
-        if state == "PASS" and not evidence_id:
-            raise RuntimeErrorState("PASS_REQUIRES_EVIDENCE")
-        if evidence_id and not (self.paths["evidence"] / f"{evidence_id}.json").is_file():
-            raise RuntimeErrorState("EVIDENCE_NOT_FOUND")
+            if not evidence_id:
+                raise RuntimeErrorState("FINAL_STATION_STATE_REQUIRES_EVIDENCE")
+            evidence_path = self.paths["evidence"] / f"{evidence_id}.json"
+            if not evidence_path.is_file():
+                raise RuntimeErrorState("EVIDENCE_NOT_FOUND")
+            if not evidence_sha256 or sha256_file(evidence_path) != evidence_sha256:
+                raise RuntimeErrorState("EVIDENCE_HASH_MISMATCH")
+            evidence = _read_json(evidence_path, None)
+            if (
+                not isinstance(evidence, dict)
+                or evidence.get("source_id") != source_id
+                or evidence.get("station") != station
+                or evidence.get("station_id") != station_name
+            ):
+                raise RuntimeErrorState("STATION_EVIDENCE_BINDING_MISMATCH")
+            if state != "NOT_VERIFIED" and evidence.get("state") != state:
+                raise RuntimeErrorState("STATION_EVIDENCE_STATE_MISMATCH")
+            if evidence.get("ticket_id") != ticket_id:
+                raise RuntimeErrorState("STATION_EVIDENCE_TICKET_MISMATCH")
+            if evidence.get("run_id") != (run_id or current.get("run_id")):
+                raise RuntimeErrorState("STATION_EVIDENCE_RUN_MISMATCH")
+        ticket = self.get_ticket(ticket_id) if ticket_id else None
+        if ticket is None:
+            raise RuntimeErrorState("TICKET_NOT_FOUND")
+        if ticket.get("source_id") != source_id:
+            raise RuntimeErrorState("SOURCE_TICKET_MISMATCH")
+        if ticket.get("status") != "AUTHORIZED":
+            raise RuntimeErrorState("TICKET_NOT_AUTHORIZED")
+        if ticket.get("operation") != "ONE_RUN":
+            raise RuntimeErrorState("TICKET_OPERATION_MISMATCH")
+        if ticket.get("capability") != "TERMINAL_EXECUTION":
+            raise RuntimeErrorState("TICKET_CAPABILITY_MISMATCH")
         return self.emit(
             flow_id=(current or {}).get("flow_id") or _token("FLOW"),
             entity_id=source_id,
@@ -814,6 +855,7 @@ class SovereignRuntime:
             sha256_before=source["sha256"],
             sha256_after=source["sha256"],
             evidence_id=evidence_id,
+            evidence_sha256=evidence_sha256,
             run_id=run_id,
             ticket_id=ticket_id,
         )
@@ -830,40 +872,169 @@ class SovereignRuntime:
         retrieval_point: str,
     ) -> dict[str, Any]:
         current = self.current(source_id)
-        if not current or current["current_station"] != "STATION_07":
+        if not current or not (
+            current["current_station"] == "STATION_07"
+            and current["current_state"] == "PASS"
+            or current["current_station"] == "WAREHOUSE_35"
+            and current["current_state"] == "SETTLED"
+        ):
             raise RuntimeErrorState("SETTLEMENT_REQUIRES_STATION_07")
-        if current["current_state"] not in {"PASS", "SETTLED"}:
-            raise RuntimeErrorState("SETTLEMENT_REQUIRES_VERIFIED_STATE")
-        if not all(value.strip() for value in (unit_id, domain, payload_pointer, retrieval_point)):
+        if not all(
+            isinstance(value, str) and value.strip()
+            for value in (unit_id, domain, payload_pointer, retrieval_point, evidence_id, sha256)
+        ):
             raise RuntimeErrorState("SETTLEMENT_FIELDS_REQUIRED")
-        evidence_path = self.paths["evidence"] / f"{evidence_id}.json"
-        if not evidence_path.is_file():
-            raise RuntimeErrorState("EVIDENCE_NOT_FOUND")
+        if len(sha256) != 64 or any(character not in "0123456789abcdefABCDEF" for character in sha256):
+            raise RuntimeErrorState("VALID_SHA256_REQUIRED")
         if not current.get("run_id"):
             raise RuntimeErrorState("SETTLEMENT_REQUIRES_ONE_RUN")
+        if not re.fullmatch(
+            r"[A-Za-z0-9][A-Za-z0-9_-]{0,127}", current["run_id"]
+        ):
+            raise RuntimeErrorState("ONE_RUN_ID_INVALID")
         matching_receipt = self.paths["one_run"] / f"{current['run_id']}.json"
         if not matching_receipt.is_file():
             raise RuntimeErrorState("ONE_RUN_RECEIPT_NOT_FOUND")
         receipt = _read_json(matching_receipt, None)
-        if receipt.get("evidence_id") != evidence_id or receipt.get("final_state") != "PASS":
+        if not isinstance(receipt, dict) or receipt.get("final_state") != "PASS":
             raise RuntimeErrorState("ONE_RUN_RECEIPT_NOT_PASS")
-        if sha256_file(evidence_path) != receipt.get("evidence_sha256"):
+        run_evidence_id = receipt.get("evidence_id")
+        if not isinstance(run_evidence_id, str) or not re.fullmatch(
+            r"[A-Za-z0-9][A-Za-z0-9_-]{0,127}", run_evidence_id
+        ):
+            raise RuntimeErrorState("ONE_RUN_EVIDENCE_ID_INVALID")
+        run_evidence_path = self.paths["evidence"] / f"{run_evidence_id}.json"
+        if (
+            not run_evidence_id
+            or not run_evidence_path.is_file()
+            or sha256_file(run_evidence_path) != receipt.get("evidence_sha256")
+        ):
             raise RuntimeErrorState("EVIDENCE_HASH_MISMATCH")
-        evidence = _read_json(evidence_path, None)
-        if evidence.get("source_id") != source_id:
+        run_evidence = _read_json(run_evidence_path, None)
+        if not isinstance(run_evidence, dict) or run_evidence.get("source_id") != source_id:
             raise RuntimeErrorState("EVIDENCE_SOURCE_MISMATCH")
-        if evidence.get("stdout_sha256") is None or evidence.get("exit_code") != 0 or evidence.get("timed_out"):
+        if run_evidence.get("stdout_sha256") is None or run_evidence.get("exit_code") != 0 or run_evidence.get("timed_out"):
             raise RuntimeErrorState("EVIDENCE_NOT_PASS")
+
+        station_events = [
+            event
+            for event in self.events(source_id)
+            if event.get("to_station") == "STATION_07"
+            and event.get("to_state") == "PASS"
+        ]
+        if not station_events:
+            raise RuntimeErrorState("STATION_07_PASS_EVIDENCE_NOT_FOUND")
+        final_station_event = station_events[-1]
+        station_evidence_id = final_station_event.get("evidence_id")
+        if not isinstance(station_evidence_id, str) or not re.fullmatch(
+            r"[A-Za-z0-9][A-Za-z0-9_-]{0,127}", station_evidence_id
+        ):
+            raise RuntimeErrorState("STATION_07_EVIDENCE_ID_INVALID")
+        station_evidence_path = self.paths["evidence"] / f"{station_evidence_id}.json"
+        if not station_evidence_id or not station_evidence_path.is_file():
+            raise RuntimeErrorState("STATION_07_PASS_EVIDENCE_NOT_FOUND")
+        station_evidence = _read_json(station_evidence_path, None)
+        if (
+            not isinstance(station_evidence, dict)
+            or station_evidence.get("source_id") != source_id
+            or station_evidence.get("station") != 7
+            or station_evidence.get("state") != "PASS"
+            or station_evidence.get("run_id") != current.get("run_id")
+            or station_evidence.get("ticket_id") != current.get("ticket_id")
+            or final_station_event.get("run_id") != current.get("run_id")
+            or final_station_event.get("ticket_id") != current.get("ticket_id")
+            or sha256_file(station_evidence_path) != final_station_event.get("evidence_sha256")
+        ):
+            raise RuntimeErrorState("STATION_07_EVIDENCE_INVALID")
+
+        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,127}", evidence_id):
+            raise RuntimeErrorState("PRODUCTIVE_UNIT_EVIDENCE_ID_INVALID")
+        evidence_path = self.paths["evidence"] / f"{evidence_id}.json"
+        if not evidence_path.is_file():
+            raise RuntimeErrorState("EVIDENCE_NOT_FOUND")
+        evidence = _read_json(evidence_path, None)
+        is_run_evidence = evidence_id == run_evidence_id
+        if (
+            not isinstance(evidence, dict)
+            or evidence.get("source_id") != source_id
+            or not (
+                is_run_evidence
+                or evidence.get("state") == "PASS"
+            )
+        ):
+            raise RuntimeErrorState("EVIDENCE_NOT_PASS")
+
+        payload_path = self.assert_allowed_path(payload_pointer)
+        if not payload_path.is_file() or sha256_file(payload_path).lower() != sha256.lower():
+            raise RuntimeErrorState("PRODUCTIVE_UNIT_PAYLOAD_HASH_MISMATCH")
+        gate_result = station_evidence.get("evidence")
+        verified_units = gate_result.get("verified_units") if isinstance(gate_result, dict) else None
+        verified_unit = next(
+            (
+                item
+                for item in verified_units or []
+                if isinstance(item, dict) and item.get("unit_id") == unit_id
+            ),
+            None,
+        )
+        if (
+            not verified_unit
+            or verified_unit.get("evidence_id") != evidence_id
+            or verified_unit.get("sha256") != sha256.lower()
+            or verified_unit.get("evidence_sha256") != sha256_file(evidence_path)
+        ):
+            raise RuntimeErrorState("PRODUCTIVE_UNIT_NOT_VERIFIED_BY_STATION_07")
         registry = _read_json(self.paths["warehouse"], [])
         if not isinstance(registry, list):
             raise RuntimeErrorState("WAREHOUSE_REGISTRY_INVALID")
+        existing = next(
+            (
+                item
+                for item in registry
+                if item.get("source_id") == source_id and item.get("unit_id") == unit_id
+            ),
+            None,
+        )
+        if existing:
+            if any(existing.get(field) != value for field, value in (
+                ("domain", domain),
+                ("payload_pointer", str(payload_path)),
+                ("sha256", sha256.lower()),
+                ("evidence_id", evidence_id),
+                ("retrieval_point", retrieval_point),
+            )):
+                raise RuntimeErrorState("PRODUCTIVE_UNIT_ID_CONFLICT")
+            if current["current_station"] == "STATION_07":
+                self.emit(
+                    flow_id=current["flow_id"],
+                    entity_id=source_id,
+                    source_id=source_id,
+                    transit_id=current.get("transit_id"),
+                    from_state=current["current_state"],
+                    to_state="SETTLED",
+                    from_station=current.get("current_station"),
+                    to_station="WAREHOUSE_35",
+                    workspace_id=current.get("workspace_id"),
+                    zone_id=current.get("zone_id"),
+                    agent_id=current.get("agent_id"),
+                    operation="WAREHOUSE_SETTLEMENT",
+                    input_ref=str(payload_path),
+                    output_ref=retrieval_point,
+                    sha256_before=sha256.lower(),
+                    sha256_after=sha256.lower(),
+                    evidence_id=evidence_id,
+                    evidence_sha256=sha256_file(evidence_path),
+                    run_id=current.get("run_id"),
+                    ticket_id=current.get("ticket_id"),
+                )
+            return existing
         record = {
             "settlement_id": _token("SET"),
             "source_id": source_id,
             "unit_id": unit_id,
             "domain": domain,
-            "payload_pointer": payload_pointer,
-            "sha256": sha256,
+            "payload_pointer": str(payload_path),
+            "sha256": sha256.lower(),
             "evidence_id": evidence_id,
             "retrieval_point": retrieval_point,
             "state": "SETTLED",
@@ -878,17 +1049,18 @@ class SovereignRuntime:
             transit_id=current.get("transit_id"),
             from_state=current["current_state"],
             to_state="SETTLED",
-            from_station="STATION_07",
+            from_station=current.get("current_station"),
             to_station="WAREHOUSE_35",
             workspace_id=current.get("workspace_id"),
             zone_id=current.get("zone_id"),
             agent_id=current.get("agent_id"),
             operation="WAREHOUSE_SETTLEMENT",
-            input_ref=payload_pointer,
+            input_ref=str(payload_path),
             output_ref=retrieval_point,
-            sha256_before=sha256,
-            sha256_after=sha256,
+            sha256_before=sha256.lower(),
+            sha256_after=sha256.lower(),
             evidence_id=evidence_id,
+            evidence_sha256=sha256_file(evidence_path),
             run_id=current.get("run_id"),
             ticket_id=current.get("ticket_id"),
         )

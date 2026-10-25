@@ -4,5 +4,22 @@
         "**/bower_components": true,
         "**/*.code-search": true,
         "**/.skia": true
-    }
+    },
+    "git.autofetch": "all",
+    "editor.formatOnSave": true,
+    "files.autoSave": "onFocusChange",
+    "editor.defaultFormatter": "ms-azuretools.vscode-containers",
+    "editor.wordWrap": "on",
+    "editor.mouseWheelZoom": true,
+    "editor.formatOnPaste": true,
+    "editor.allowVariableFontsInAccessibilityMode": true,
+    "editor.autoIndentOnPaste": true,
+    "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+    "editor.codeActions.triggerOnFocusChange": true,
+    "editor.columnSelection": true,
+    "editor.definitionLinkOpensInPeek": true,
+    "editor.experimental.asyncTokenizationLogging": true,
+    "editor.hideCursorInOverviewRuler": true,
+    "editor.inlineCompletionsAccessibilityVerbose": true,
+    "editor.inlayHints.padding": true
 }
