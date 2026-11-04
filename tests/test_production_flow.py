@@ -242,7 +242,6 @@ class ProductionFlowTests(unittest.TestCase):
                 ticket_id=self.ticket["ticket_id"],
             )
 
-
     def test_production_flow_preserves_intake_identity_ticket_and_station_evidence(self):
         registry = StationRegistry()
         for station in range(1, 7):
