@@ -243,5 +243,117 @@ class ProductionFlowTests(unittest.TestCase):
             )
 
 
+    def test_production_flow_preserves_intake_identity_ticket_and_station_evidence(self):
+        registry = StationRegistry()
+        for station in range(1, 7):
+            registry.register(
+                station,
+                lambda context: StationHandlerResult(
+                    state="PASS",
+                    operation=f"STATION_{context.station:02d}_INTEGRATION",
+                    evidence={
+                        "source_id": context.source_id,
+                        "ticket_id": context.ticket_id,
+                        "station": context.station,
+                    },
+                ),
+            )
+
+        result = run_production_flow(
+            self.request(),
+            runtime=self.runtime,
+            station_registry=registry,
+        )
+
+        self.assertTrue(result["success"], result)
+        self.assertEqual(result["state"], "SETTLED")
+        self.assertEqual(result["source_id"], self.source["source_id"])
+        self.assertEqual(result["transit_id"], self.source["transit_id"])
+        self.assertEqual(result["ticket_id"], self.ticket["ticket_id"])
+        packet = result["normalized_packet"]
+        self.assertEqual(packet["source_id"], self.source["source_id"])
+        self.assertEqual(packet["transit_id"], self.source["transit_id"])
+
+        receipts = result["pipeline"]["receipts"]
+        self.assertEqual([item["station"] for item in receipts], list(range(1, 8)))
+        for receipt in receipts:
+            self.assertEqual(receipt["source_id"], self.source["source_id"])
+            self.assertEqual(receipt["transit_id"], self.source["transit_id"])
+            self.assertEqual(receipt["ticket_id"], self.ticket["ticket_id"])
+            self.assertEqual(receipt["state"], "PASS")
+            self.assertTrue(receipt["readback_verified"])
+            self.assertTrue(receipt["receipt_readback_verified"])
+            evidence = json.loads(
+                Path(receipt["evidence_path"]).read_text(encoding="utf-8")
+            )
+            self.assertEqual(evidence["source_id"], self.source["source_id"])
+            self.assertEqual(evidence["transit_id"], self.source["transit_id"])
+            self.assertEqual(evidence["ticket_id"], self.ticket["ticket_id"])
+            self.assertEqual(evidence["evidence_id"], receipt["evidence_id"])
+
+    def test_production_flow_stops_at_station_failure_without_settlement(self):
+        registry = StationRegistry()
+        called = []
+        for station in range(1, 7):
+            def handler(context, registered_station=station):
+                called.append(registered_station)
+                state = "HOLD" if registered_station == 3 else "PASS"
+                return StationHandlerResult(
+                    state=state,
+                    operation=f"STATION_{registered_station:02d}_INTEGRATION",
+                    evidence={
+                        "source_id": context.source_id,
+                        "ticket_id": context.ticket_id,
+                        "station": registered_station,
+                    },
+                )
+
+            registry.register(station, handler)
+
+        result = run_production_flow(
+            self.request(),
+            runtime=self.runtime,
+            station_registry=registry,
+        )
+
+        self.assertFalse(result["success"])
+        self.assertEqual(result["state"], "HOLD")
+        self.assertEqual(result["source_id"], self.source["source_id"])
+        self.assertEqual(result["transit_id"], self.source["transit_id"])
+        self.assertEqual(result["ticket_id"], self.ticket["ticket_id"])
+        self.assertEqual(result["pipeline"]["stopped_at"], 3)
+        self.assertEqual(result["pipeline"]["completed_stations"], [1, 2])
+        self.assertEqual(called, [1, 2, 3])
+        self.assertEqual(result["settlements"], [])
+        self.assertTrue(self.source_path.is_file())
+
+    def test_production_flow_rejects_pass_without_station_evidence(self):
+        registry = StationRegistry()
+        registry.register(
+            1,
+            lambda context: StationHandlerResult(
+                state="PASS",
+                operation="STATION_01_EMPTY_EVIDENCE",
+                evidence={},
+            ),
+        )
+
+        result = run_production_flow(
+            self.request(),
+            runtime=self.runtime,
+            station_registry=registry,
+        )
+
+        self.assertFalse(result["success"])
+        self.assertEqual(result["state"], "NOT_VERIFIED")
+        self.assertEqual(result["pipeline"]["stopped_at"], 1)
+        self.assertEqual(result["pipeline"]["completed_stations"], [])
+        self.assertIn(
+            "PASS_REQUIRES_EVIDENCE",
+            result["pipeline"]["receipts"][0]["errors"],
+        )
+        self.assertEqual(result["settlements"], [])
+
+
 if __name__ == "__main__":
     unittest.main()
