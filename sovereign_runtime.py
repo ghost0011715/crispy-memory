@@ -189,7 +189,8 @@ class SovereignRuntime:
             raise RuntimeErrorState("SOURCE_MUST_BE_FILE")
         stat = resolved.stat()
         digest = sha256_file(resolved)
-        identity = f"{resolved}|{stat.st_dev}|{stat.st_ino}|{stat.st_birthtime if hasattr(stat, 'st_birthtime') else stat.st_ctime}"
+        birthtime = getattr(stat, "st_birthtime", None)
+        identity = f"{resolved}|{stat.st_dev}|{stat.st_ino}|{birthtime if birthtime is not None else ''}"
         source_id = "SRC-" + hashlib.sha256(identity.encode("utf-8")).hexdigest()[:24].upper()
 
         with self._lock:

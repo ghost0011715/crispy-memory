@@ -1,6 +1,7 @@
 import json
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 from runtime.capability_registry import capabilities_for
@@ -41,11 +42,22 @@ class UniversalIntakeTests(unittest.TestCase):
             source.write_bytes(b"\x89PNG\r\n\x1a\ninvalid image")
             runtime = SovereignRuntime(root / "runtime", allowed_roots=[allowed])
 
-            packet = UniversalIntake(runtime).ingest(source)
+            original_import = __import__
 
-            self.assertEqual(packet["state"], "NOT_VERIFIED")
-            self.assertIn("IMAGE_OCR", [item["capability_id"] for item in packet["capabilities"]])
-            self.assertTrue(packet["errors"])
+            def without_pillow(name, *args, **kwargs):
+                if name == "PIL" or name.startswith("PIL."):
+                    raise ImportError("Pillow intentionally unavailable in this test")
+                return original_import(name, *args, **kwargs)
+
+            with patch("builtins.__import__", side_effect=without_pillow):
+                packet = UniversalIntake(runtime).ingest(source)
+
+            capability_ids = [item["capability_id"] for item in packet["capabilities"]]
+            self.assertEqual(packet["state"], "HOLD")
+            self.assertIn("IMAGE_READ", capability_ids)
+            self.assertIn("IMAGE_OCR", capability_ids)
+            self.assertIn("PILLOW", packet["provider_required"])
+            self.assertTrue(any("Install Pillow" in item for item in packet["warnings"]))
 
     def test_capability_registry_reports_partial_media_support(self):
         audio = capabilities_for(".wav")
