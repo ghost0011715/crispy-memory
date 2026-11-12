@@ -131,6 +131,11 @@ class SovereignRuntime:
             self.paths[key].parent.mkdir(parents=True, exist_ok=True)
 
     def assert_allowed_path(self, target: str | Path, *, must_exist: bool = True) -> Path:
+<<<<<<< Updated upstream
+=======
+        if not isinstance(target, (str, os.PathLike)):
+            raise RuntimeErrorState(f"PATH_INVALID:{target!r}")
+>>>>>>> Stashed changes
         requested = Path(target).expanduser()
         if requested.is_symlink():
             raise RuntimeErrorState("PATH_SYMLINK_NOT_ALLOWED")
@@ -189,8 +194,12 @@ class SovereignRuntime:
             raise RuntimeErrorState("SOURCE_MUST_BE_FILE")
         stat = resolved.stat()
         digest = sha256_file(resolved)
+<<<<<<< Updated upstream
         birthtime = getattr(stat, "st_birthtime", None)
         identity = f"{resolved}|{stat.st_dev}|{stat.st_ino}|{birthtime if birthtime is not None else ''}"
+=======
+        identity = f"{resolved}|{stat.st_dev}|{stat.st_ino}|{stat.st_birthtime if hasattr(stat, 'st_birthtime') else stat.st_ctime}"
+>>>>>>> Stashed changes
         source_id = "SRC-" + hashlib.sha256(identity.encode("utf-8")).hexdigest()[:24].upper()
 
         with self._lock:
@@ -414,7 +423,11 @@ class SovereignRuntime:
                 blockers.append("SOURCE_TICKET_MISMATCH")
             if ticket["status"] != "AUTHORIZED":
                 blockers.append("TICKET_NOT_AUTHORIZED")
+<<<<<<< Updated upstream
         if not operation.strip():
+=======
+        if not isinstance(operation, str) or not operation.strip():
+>>>>>>> Stashed changes
             blockers.append("OPERATION_REQUIRED")
         elif ticket and ticket.get("operation") != operation:
             blockers.append("TICKET_OPERATION_MISMATCH")
@@ -425,6 +438,7 @@ class SovereignRuntime:
         except RuntimeErrorState:
             blockers.append("WORKSPACE_NOT_ALLOWED")
 
+<<<<<<< Updated upstream
         allowed = {
             item.strip().lower()
             for item in os.environ.get(
@@ -435,6 +449,21 @@ class SovereignRuntime:
         executable = Path(command).name.lower().removesuffix(".exe")
         if executable not in allowed:
             blockers.append(f"COMMAND_NOT_ALLOWED:{executable}")
+=======
+        if not isinstance(command, str) or not command.strip():
+            blockers.append("COMMAND_REQUIRED")
+        else:
+            allowed = {
+                item.strip().lower()
+                for item in os.environ.get(
+                    "NOVADESK_ALLOWED_COMMANDS", "python,python3,pytest"
+                ).split(",")
+                if item.strip()
+            }
+            executable = Path(command).name.lower().removesuffix(".exe")
+            if executable not in allowed:
+                blockers.append(f"COMMAND_NOT_ALLOWED:{executable}")
+>>>>>>> Stashed changes
         return {
             "state": "READY" if not blockers else "BLOCKED",
             "blockers": blockers,
@@ -518,6 +547,11 @@ class SovereignRuntime:
         workspace_id: str | None = None,
         zone_id: str | None = None,
     ) -> dict[str, Any]:
+<<<<<<< Updated upstream
+=======
+        if not isinstance(command, str) or not command.strip():
+            raise RuntimeErrorState("COMMAND_REQUIRED")
+>>>>>>> Stashed changes
         source = self.get_source(source_id)
         if source is None:
             raise RuntimeErrorState("SOURCE_NOT_FOUND")
