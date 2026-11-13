@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from runtime.multilingual_quality_gate import audit_training_preflight
 from runtime.productive_units import validate_productive_unit
 from runtime.register_station07 import register_station07
 from runtime.station_engine import StationPipeline, StationRegistry, StationEngine
@@ -24,6 +25,25 @@ def run_production_flow(
             "state": "HOLD",
             "blockers": ["REQUEST_MUST_BE_AN_OBJECT"],
         }
+
+    # Before registering sources or performing an authorized ONE_RUN, require
+    # bounded data-quality evidence whenever this flow is used for training.
+    multilingual_quality = None
+    if request.get("purpose") == "TRAINING" or "training_quality_packet" in request:
+        multilingual_quality = audit_training_preflight(
+            request.get("training_quality_packet")
+        )
+        if multilingual_quality["state"] != "PASS":
+            return {
+                "success": False,
+                "state": multilingual_quality["state"],
+                "blockers": [
+                    "MULTILINGUAL_QUALITY_NOT_VERIFIED",
+                    *multilingual_quality["blockers"],
+                ],
+                "multilingual_quality": multilingual_quality,
+            }
+
     required = ("source_path", "ticket_id", "workspace_id", "agent_id", "productive_units")
     missing = []
     for name in required:
@@ -269,4 +289,5 @@ def run_production_flow(
         "normalized_packet": normalized,
         "pipeline": pipeline,
         "settlements": settlements,
+        "multilingual_quality": multilingual_quality,
     }
