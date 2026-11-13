@@ -114,11 +114,6 @@ class FileIntake:
         self.records_dir.mkdir(parents=True, exist_ok=True)
 
     def process(self, source: str | Path) -> dict[str, Any]:
-<<<<<<< Updated upstream
-=======
-        if not isinstance(source, (str, os.PathLike)):
-            raise IntakeError("SOURCE_MUST_BE_FILE_OR_DIRECTORY")
->>>>>>> Stashed changes
         requested = Path(source).expanduser()
         if requested.is_symlink():
             raise IntakeError("SOURCE_SYMLINK_NOT_ALLOWED")
