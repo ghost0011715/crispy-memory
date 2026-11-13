@@ -112,6 +112,18 @@ class MultilingualQualityGateTests(unittest.TestCase):
         p["required_languages"] = ["ar", "ja"]
         self.assertIn("LANGUAGE_NOT_OBSERVED:ja", audit_training_preflight(p)["blockers"])
 
+    def test_preflight_evaluation_metrics_must_be_finite_and_counted(self):
+        p = self.package()
+        p["evaluation_groups"] = {
+            "validation_fr": {"expected": 1, "actual": 1, "metrics": {"loss": 1.2}},
+            "test_es": {"expected": 1, "actual": 1, "metrics": {"loss": 1.1}},
+        }
+        result = audit_training_preflight(p)
+        self.assertEqual(result["state"], "PASS", result)
+        self.assertEqual(result["evaluation_groups"]["checked_groups"], ["validation_fr", "test_es"])
+        p["evaluation_groups"]["test_es"]["metrics"]["loss"] = math.nan
+        self.assertIn("EVALUATION_METRIC_INVALID:test_es", audit_training_preflight(p)["blockers"])
+
     def test_evaluation_groups_separate_with_finite_metrics(self):
         groups = {"validation_ar": {"expected": 2, "actual": 2, "metrics": {"loss": 1.1}},
                   "validation_fr": {"expected": 2, "actual": 2, "metrics": {"loss": 2.1}}}
