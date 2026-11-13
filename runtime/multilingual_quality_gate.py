@@ -188,7 +188,13 @@ def audit_training_preflight(package: Any) -> dict[str, Any]:
         package.get("train_labels"),
         expected_train_samples=dataset.get("observed_counts", {}).get("train", 0),
     )
+    evaluation = (
+        audit_evaluation_groups(package["evaluation_groups"])
+        if "evaluation_groups" in package else None
+    )
     problems = dataset["blockers"] + labels["blockers"]
+    if evaluation is not None:
+        problems.extend(evaluation["blockers"])
     required = package.get("required_languages", [])
     if not isinstance(required, list) or any(
         not isinstance(code, str) or not LANGUAGE_TAG.fullmatch(code) for code in required
@@ -203,8 +209,9 @@ def audit_training_preflight(package: Any) -> dict[str, Any]:
         return {
             "state": "NOT_VERIFIED", "evidence_state": "UNPROVEN",
             "blockers": sorted(set(problems)), "dataset": dataset, "sft_labels": labels,
+            "evaluation_groups": evaluation,
         }
-    return _finish(problems, dataset=dataset, sft_labels=labels)
+    return _finish(problems, dataset=dataset, sft_labels=labels, evaluation_groups=evaluation)
 
 
 def audit_evaluation_groups(groups: Any) -> dict[str, Any]:
