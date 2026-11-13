@@ -242,6 +242,108 @@ class ProductionFlowTests(unittest.TestCase):
                 ticket_id=self.ticket["ticket_id"],
             )
 
+    def multilingual_training_packet(self):
+        return {
+            "samples": [
+                {
+                    "sample_id": "AR-TRAIN", "source_id": "SRC-AR-TRAIN",
+                    "language": "ar-SA", "split": "train",
+                    "text": "لا تحذف الأصل، احتفظ بدليل المصدر.",
+                },
+                {
+                    "sample_id": "EN-TRAIN", "source_id": "SRC-EN-TRAIN",
+                    "language": "en-US", "split": "train",
+                    "text": "Do not delete evidence before verification.",
+                },
+                {
+                    "sample_id": "FR-VAL", "source_id": "SRC-FR-VAL",
+                    "language": "fr-FR", "split": "validation",
+                    "text": "L'élève vérifie la réponse française.",
+                },
+                {
+                    "sample_id": "ES-TEST", "source_id": "SRC-ES-TEST",
+                    "language": "es-ES", "split": "test",
+                    "text": "¿Dónde están las pruebas del sistema?",
+                },
+            ],
+            "expected_split_counts": {"train": 2, "validation": 1, "test": 1},
+            "train_labels": [[0, 21, 22], [0, 30, 31]],
+            "required_languages": ["ar", "en", "fr", "es"],
+            "evaluation_groups": {
+                "validation_fr": {
+                    "expected": 1, "actual": 1, "metrics": {"loss": 1.2}
+                },
+                "test_es": {
+                    "expected": 1, "actual": 1, "metrics": {"loss": 1.3}
+                },
+            },
+        }
+
+    def test_multilingual_quality_gate_blocks_missing_training_packet_before_runtime(self):
+        request = self.request()
+        request["purpose"] = "TRAINING"
+        original_events = len(self.runtime.events(self.source["source_id"]))
+        result = run_production_flow(
+            request, runtime=self.runtime,
+            station_registry=self.registry_with_first_six_stations(),
+        )
+        self.assertFalse(result["success"])
+        self.assertEqual(result["state"], "HOLD")
+        self.assertIn("MULTILINGUAL_QUALITY_NOT_VERIFIED", result["blockers"])
+        self.assertEqual(len(self.runtime.events(self.source["source_id"])), original_events)
+        self.assertEqual(list(self.runtime.paths["one_run"].iterdir()), [])
+
+    def test_multilingual_quality_gate_blocks_zero_targets_before_runtime(self):
+        request = self.request()
+        request["purpose"] = "TRAINING"
+        request["training_quality_packet"] = self.multilingual_training_packet()
+        request["training_quality_packet"]["train_labels"][0] = [-100, -100, -100]
+        result = run_production_flow(
+            request, runtime=self.runtime,
+            station_registry=self.registry_with_first_six_stations(),
+        )
+        self.assertFalse(result["success"])
+        self.assertIn("ZERO_SUPERVISED_TARGETS:0", result["blockers"])
+        self.assertEqual(list(self.runtime.paths["one_run"].iterdir()), [])
+
+    def test_multilingual_quality_gate_blocks_cross_split_source(self):
+        request = self.request()
+        request["purpose"] = "TRAINING"
+        packet = self.multilingual_training_packet()
+        packet["samples"][2]["source_id"] = packet["samples"][0]["source_id"]
+        request["training_quality_packet"] = packet
+        result = run_production_flow(
+            request, runtime=self.runtime,
+            station_registry=self.registry_with_first_six_stations(),
+        )
+        self.assertFalse(result["success"])
+        self.assertTrue(
+            any(code.startswith("CROSS_SPLIT_SOURCE:") for code in result["blockers"])
+        )
+
+    def test_multilingual_quality_gate_allows_verified_bounded_flow(self):
+        request = self.request()
+        request["purpose"] = "TRAINING"
+        request["training_quality_packet"] = self.multilingual_training_packet()
+        result = run_production_flow(
+            request, runtime=self.runtime,
+            station_registry=self.registry_with_first_six_stations(),
+        )
+        self.assertTrue(result["success"], result)
+        self.assertEqual(result["state"], "SETTLED")
+        self.assertEqual(result["source_id"], self.source["source_id"])
+        self.assertEqual(result["transit_id"], self.source["transit_id"])
+        self.assertEqual(
+            result["multilingual_quality"]["evidence_state"], "VERIFIED_BOUNDED"
+        )
+        self.assertEqual(
+            result["multilingual_quality"]["dataset"]["languages"],
+            {"ar": 1, "en": 1, "fr": 1, "es": 1},
+        )
+        self.assertEqual(
+            result["pipeline"]["completed_stations"], list(range(1, 8))
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
