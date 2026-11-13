@@ -1,10 +1,7 @@
 import json
 import tempfile
 import unittest
-<<<<<<< Updated upstream
 from unittest.mock import patch
-=======
->>>>>>> Stashed changes
 from pathlib import Path
 
 from runtime.capability_registry import capabilities_for
@@ -45,7 +42,6 @@ class UniversalIntakeTests(unittest.TestCase):
             source.write_bytes(b"\x89PNG\r\n\x1a\ninvalid image")
             runtime = SovereignRuntime(root / "runtime", allowed_roots=[allowed])
 
-<<<<<<< Updated upstream
             original_import = __import__
 
             def without_pillow(name, *args, **kwargs):
@@ -62,13 +58,6 @@ class UniversalIntakeTests(unittest.TestCase):
             self.assertIn("IMAGE_OCR", capability_ids)
             self.assertIn("PILLOW", packet["provider_required"])
             self.assertTrue(any("Install Pillow" in item for item in packet["warnings"]))
-=======
-            packet = UniversalIntake(runtime).ingest(source)
-
-            self.assertEqual(packet["state"], "NOT_VERIFIED")
-            self.assertIn("IMAGE_OCR", [item["capability_id"] for item in packet["capabilities"]])
-            self.assertTrue(packet["errors"])
->>>>>>> Stashed changes
 
     def test_capability_registry_reports_partial_media_support(self):
         audio = capabilities_for(".wav")
