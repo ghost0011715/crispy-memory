@@ -192,7 +192,7 @@ class SovereignRuntime:
         stat = resolved.stat()
         digest = sha256_file(resolved)
         birthtime = getattr(stat, "st_birthtime", None)
-        identity_time = birthtime if birthtime is not None else stat.st_ctime
+        identity_time = birthtime if birthtime is not None else ""
         identity = f"{resolved}|{stat.st_dev}|{stat.st_ino}|{identity_time}"
         source_id = "SRC-" + hashlib.sha256(identity.encode("utf-8")).hexdigest()[:24].upper()
 
