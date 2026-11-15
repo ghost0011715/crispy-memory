@@ -133,7 +133,16 @@ class ProductionFlowTests(unittest.TestCase):
         readiness = check_source_removal_readiness(
             self.runtime, self.source["source_id"]
         )
-        self.assertTrue(readiness["eligible"], readiness)
+        # Settled output is not proof of safe source retirement.
+        self.assertFalse(readiness["eligible"], readiness)
+        self.assertTrue(readiness["source_exists"])
+        self.assertIn("SOURCE_RETIREMENT_AUTHORIZATION_MISSING", readiness["blockers"])
+        self.assertIn("SOURCE_INVENTORY_PROOF_MISSING", readiness["blockers"])
+        self.assertIn("INDEPENDENT_FSX_RETRIEVAL_PROOF_MISSING", readiness["blockers"])
+        self.assertIn(
+            "PRODUCTIVE_UNIT_POINTS_TO_ORIGINAL:UNIT-PRODUCTION-TEST",
+            readiness["blockers"],
+        )
 
     def test_production_flow_holds_when_any_station_handler_is_missing(self):
         registry = StationRegistry()
@@ -150,6 +159,41 @@ class ProductionFlowTests(unittest.TestCase):
             "STATION_HANDLER_NOT_REGISTERED",
             result["pipeline"]["receipts"][0]["errors"],
         )
+
+    def test_source_retirement_rejects_an_identical_raw_copy(self):
+        result = run_production_flow(
+            self.request(),
+            runtime=self.runtime,
+            station_registry=self.registry_with_first_six_stations(),
+        )
+        self.assertTrue(result["success"], result)
+        duplicate = self.allowed / "full-original-copy.txt"
+        duplicate.write_bytes(self.source_path.read_bytes())
+        warehouse = self.runtime.paths["warehouse"]
+        data = json.loads(warehouse.read_text(encoding="utf-8"))
+        for item in data:
+            if item.get("unit_id") == "UNIT-PRODUCTION-TEST":
+                item["payload_pointer"] = str(duplicate)
+        warehouse.write_text(json.dumps(data), encoding="utf-8")
+
+        readiness = check_source_removal_readiness(
+            self.runtime, self.source["source_id"]
+        )
+        self.assertFalse(readiness["eligible"])
+        self.assertIn(
+            "ORIGINAL_BYTES_RETAINED_AS_UNIT:UNIT-PRODUCTION-TEST",
+            readiness["blockers"],
+        )
+        self.assertTrue(self.source_path.exists())
+
+    def test_no_retirement_without_seven_station_receipts(self):
+        readiness = check_source_removal_readiness(
+            self.runtime, self.source["source_id"]
+        )
+        self.assertFalse(readiness["eligible"])
+        self.assertIn("STATION_01_VERIFIED_RECEIPT_MISSING", readiness["blockers"])
+        self.assertIn("STATION_07_VERIFIED_RECEIPT_MISSING", readiness["blockers"])
+        self.assertTrue(self.source_path.exists())
 
     def test_source_removal_readiness_detects_changed_source_bytes(self):
         result = run_production_flow(
