@@ -417,7 +417,7 @@ class SovereignRuntime:
                 blockers.append("SOURCE_TICKET_MISMATCH")
             if ticket["status"] != "AUTHORIZED":
                 blockers.append("TICKET_NOT_AUTHORIZED")
-        if not isinstance(operation, str) or not operation.strip()
+        if not isinstance(operation, str) or not operation.strip():
             blockers.append("OPERATION_REQUIRED")
         elif ticket and ticket.get("operation") != operation:
             blockers.append("TICKET_OPERATION_MISMATCH")
