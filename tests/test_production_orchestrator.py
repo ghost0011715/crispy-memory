@@ -1,3 +1,5 @@
+import hashlib
+import json
 import sys
 import tempfile
 import unittest
@@ -117,6 +119,38 @@ class ProductionOrchestratorIntegrationTests(unittest.TestCase):
             },
         }
 
+    def assert_station_receipt_evidence(self, receipt):
+        evidence_bytes = Path(receipt["evidence_path"]).read_bytes()
+        evidence = json.loads(evidence_bytes)
+        self.assertEqual(
+            hashlib.sha256(evidence_bytes).hexdigest(),
+            receipt["evidence_sha256"],
+        )
+        self.assertEqual(evidence["evidence_id"], receipt["evidence_id"])
+        self.assertEqual(evidence["source_id"], self.source["source_id"])
+        self.assertEqual(evidence["transit_id"], self.source["transit_id"])
+        self.assertEqual(evidence["ticket_id"], self.ticket["ticket_id"])
+        self.assertEqual(evidence["station"], receipt["station"])
+        self.assertEqual(evidence["state"], receipt["state"])
+        self.assertTrue(evidence["evidence"])
+
+        saved_receipt = json.loads(
+            Path(receipt["receipt_path"]).read_text(encoding="utf-8")
+        )
+        self.assertEqual(saved_receipt, receipt)
+        journal_events = [
+            event
+            for event in self.runtime.events(self.source["source_id"])
+            if event.get("evidence_id") == receipt["evidence_id"]
+        ]
+        self.assertEqual(len(journal_events), 1)
+        event = journal_events[0]
+        self.assertEqual(event["source_id"], self.source["source_id"])
+        self.assertEqual(event["transit_id"], self.source["transit_id"])
+        self.assertEqual(event["ticket_id"], self.ticket["ticket_id"])
+        self.assertEqual(event["to_station"], receipt["station_id"])
+        self.assertEqual(event["evidence_sha256"], receipt["evidence_sha256"])
+
     def test_intake_to_station_seven_preserves_identity_ticket_and_evidence(self):
         registry, called = self.registry()
 
@@ -131,6 +165,31 @@ class ProductionOrchestratorIntegrationTests(unittest.TestCase):
         self.assertEqual(result["source_id"], self.source["source_id"])
         self.assertEqual(result["transit_id"], self.source["transit_id"])
         self.assertEqual(result["ticket_id"], self.ticket["ticket_id"])
+        self.assertEqual(
+            result["normalized_packet"]["source_id"], self.source["source_id"]
+        )
+        self.assertEqual(
+            result["normalized_packet"]["transit_id"], self.source["transit_id"]
+        )
+        normalization_events = [
+            event
+            for event in self.runtime.events(self.source["source_id"])
+            if event.get("operation") == "READABLE_NORMALIZATION_PASS"
+        ]
+        self.assertEqual(len(normalization_events), 1)
+        normalization_ticket = self.runtime.get_ticket(
+            normalization_events[0]["ticket_id"]
+        )
+        self.assertIsNotNone(normalization_ticket)
+        self.assertEqual(
+            normalization_ticket["source_id"], self.source["source_id"]
+        )
+        self.assertEqual(
+            normalization_ticket["operation"], "READ_ONLY_INSPECTION"
+        )
+        self.assertEqual(
+            normalization_ticket["capability"], "FILESYSTEM_INSPECTION"
+        )
         self.assertEqual(called, list(range(1, 7)))
         pipeline = result["pipeline"]
         self.assertEqual(pipeline["completed_stations"], list(range(1, 8)))
@@ -142,6 +201,7 @@ class ProductionOrchestratorIntegrationTests(unittest.TestCase):
             self.assertEqual(receipt["ticket_id"], self.ticket["ticket_id"])
             self.assertTrue(receipt["readback_verified"])
             self.assertTrue(receipt["receipt_readback_verified"])
+            self.assert_station_receipt_evidence(receipt)
         self.assertEqual(
             self.runtime.current(self.source["source_id"])["current_station"],
             "WAREHOUSE_35",
@@ -162,6 +222,8 @@ class ProductionOrchestratorIntegrationTests(unittest.TestCase):
         self.assertEqual(result["pipeline"]["stopped_at"], 3)
         self.assertEqual(result["pipeline"]["completed_stations"], [1, 2])
         self.assertEqual(called, [1, 2, 3])
+        for receipt in result["pipeline"]["receipts"]:
+            self.assert_station_receipt_evidence(receipt)
         self.assertEqual(result["settlements"], [])
 
     def test_pass_without_evidence_is_downgraded_and_stops_pipeline(self):
@@ -181,8 +243,38 @@ class ProductionOrchestratorIntegrationTests(unittest.TestCase):
             "PASS_REQUIRES_EVIDENCE",
             result["pipeline"]["receipts"][-1]["errors"],
         )
+        failed_receipt = result["pipeline"]["receipts"][-1]
+        self.assertEqual(failed_receipt["state"], "NOT_VERIFIED")
+        self.assert_station_receipt_evidence(failed_receipt)
         self.assertEqual(result["settlements"], [])
+
+    def test_unauthorized_ticket_is_blocked_before_normalization_and_stations(self):
+        pending_ticket = self.runtime.create_ticket(
+            self.source["source_id"], "ONE_RUN", "TERMINAL_EXECUTION"
+        )
+        request = self.request()
+        request["ticket_id"] = pending_ticket["ticket_id"]
+        registry, called = self.registry()
+
+        result = run_production_flow(
+            request,
+            runtime=self.runtime,
+            station_registry=registry,
+        )
+
+        self.assertFalse(result["success"])
+        self.assertEqual(result["state"], "HOLD")
+        self.assertIn("TICKET_NOT_AUTHORIZED", result["blockers"])
+        self.assertEqual(called, [])
+        self.assertNotIn("pipeline", result)
+        self.assertFalse(
+            any(
+                event.get("operation") == "READABLE_NORMALIZATION_STARTED"
+                for event in self.runtime.events(self.source["source_id"])
+            )
+        )
 
 
 if __name__ == "__main__":
     unittest.main()
+
